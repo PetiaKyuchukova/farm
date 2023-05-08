@@ -1,0 +1,15 @@
+version: "2"
+sql:
+  - schema: "backend/postgres/migrations"
+    queries: "backend/postgres/query.sql"
+    engine: "postgresql"
+    gen:
+      go:
+        package: "db"
+        out: "gen/db"
+        emit_prepared_queries: true
+        emit_interface: true
+        emit_exact_table_names: false
+        emit_empty_slices: true
+        emit_json_tags: true
+        json_tags_case_style: "snake"
