@@ -4,8 +4,14 @@ CREATE TABLE cows
     id text NOT NULL,
     birthdate timestamp NOT NULL,
     colour text,
-    motherid text,
-    PRIMARY KEY (id,birthdate)
+    motherId text,
+    farmerId text NOT NULL,
+    lastOvulation timestamp,
+    lastBirth timestamp,
+    isPregnant boolean,
+    fertilization timestamp,
+
+    PRIMARY KEY (id)
 );
 
 -- +goose Down

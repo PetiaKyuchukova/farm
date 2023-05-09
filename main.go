@@ -63,11 +63,13 @@ func main() {
 	fmt.Println("err", err)
 
 	handler := handlers.NewHandler(uc)
+	userHandler := handlers.NewUserHandler()
 
 	router := gin.Default()
 
 	//publicRoutes := router.Group("/profile")
 	router.PUT("/upsert", handler.UpsertCow)
+	router.PUT("/farmer", userHandler.Register)
 	router.DELETE("/delete/:id", handler.DeleteCow)
 	router.GET("/cows", handler.GetAllCows)
 	router.GET("/cows/:id", handler.GetCowById)
