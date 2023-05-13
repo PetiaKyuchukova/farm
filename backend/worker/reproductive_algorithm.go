@@ -1,33 +1,108 @@
 package worker
 
 import (
+	"context"
 	"farm/backend/domain"
+	"farm/backend/usecase"
+	"fmt"
+	"github.com/go-co-op/gocron"
 	"time"
 )
 
-func AlarmWorker() {
-	//get all cows from DB
-	cows := []domain.Cow{}
-	today := time.Now()
+type Worker struct {
+	notificationUC usecase.NotificationUC
+	cowUC          usecase.CowsUC
+}
 
+func NewWorker(notificationUC usecase.NotificationUC, cowUC usecase.CowsUC) *Worker {
+	return &Worker{notificationUC: notificationUC, cowUC: cowUC}
+}
+
+func (w *Worker) Schedule(ctx context.Context, cronExpression string) error {
+	s := gocron.NewScheduler(time.UTC)
+
+	_, err := s.Cron(cronExpression).SingletonMode().Do(func() {
+		w.NotificationWorker(ctx)
+	})
+	if err != nil {
+		return fmt.Errorf("error setting up cron scheduler. caused by - %v", err)
+	}
+
+	s.StartAsync()
+
+	return nil
+}
+
+func (w *Worker) NotificationWorker(ctx context.Context) {
+	//get all cows from DB
+	cows, err := w.cowUC.GetAllCows(ctx)
+	if err != nil {
+		if err != nil {
+			fmt.Errorf("error getting all cows from database: %w", err)
+			return
+		}
+	}
+
+	today := time.Now()
 	day := time.Hour * 24
-	//тези аларми ги записваме в базата данни и след това фронтенда събира всички аларми за този ден
+	//save alarms to db then frontend will fetch them for current day
 	for _, cow := range cows {
 		if cow.LastFertilization.Add(36*day) == today {
-			//sent alarm to check pregnancy
+			//sent alarm: to check pregnancy. Is this cow pregnant? --> true or false (if user press yes, sent a put req to update IsPregnant to true)
+			w.notificationUC.UpsertNotification(ctx, domain.Notification{
+				CowID: cow.ID,
+				Date:  time.Now(),
+				Type:  domain.PregnantType,
+				Text:  domain.PregnantText,
+			})
+
 		} else if cow.IsPregnant && cow.LastFertilization.Add(208*day) == today {
-			//sent alarm засушаване след 15 дни
+			//sent alarm: dry period after 15 days
+			w.notificationUC.UpsertNotification(ctx, domain.Notification{
+				CowID: cow.ID,
+				Date:  time.Now(),
+				Type:  domain.DryPeriodAfter15dType,
+				Text:  domain.DryPeriodAfter15dText,
+			})
 		} else if cow.IsPregnant && cow.LastFertilization.Add(223*day) == today {
-			//sent alarm време е за засушаване, след 60 дни кравата очакваме да роди
+			//sent alarm: time for dry period, birth after 60 days
+			w.notificationUC.UpsertNotification(ctx, domain.Notification{
+				CowID: cow.ID,
+				Date:  time.Now(),
+				Type:  domain.DryPeriodStartType,
+				Text:  domain.DryPeriodStartText,
+			})
 		} else if cow.IsPregnant && cow.LastFertilization.Add(283*day) == today {
-			//sent alarm очакваме крават днес да роди
+			//sent alarm: today we expect birth! did the cow give birth today? --> true or false (if user press yes, sent a put req to update IsPregnant to false LastOvulation = today )
+			//should add func to set give birthdate manually
+
+			w.notificationUC.UpsertNotification(ctx, domain.Notification{
+				CowID: cow.ID,
+				Date:  time.Now(),
+				Type:  domain.GivingBirthType,
+				Text:  domain.GivingBirthText,
+			})
 		}
 
-		//ако кравата не е бременна И след последната овулация нямаме заплождане и днес е 21 дена след предната овулация прави аларма кравата е в овулация
 		if !cow.IsPregnant && cow.LastFertilization.Before(cow.LastOvulation) && cow.LastOvulation.Add(21*day) == today {
-			//sent alarm Кравата е в овулация и готова за заплождане ще оплождане ли ако да сетваме датата на оплождане
+			cow.LastOvulation = today
+			//if the cow is not pregnant AND we did not make Artificial insemination on last ovulation AND today is 21 days after the last ovu - today is ovulation
+			//sent alarm: today is {cow number} ovulation day, will we make Artificial insemination? --> true or false (if user press true sent a put req that will update the LastFertilization)
+			w.notificationUC.UpsertNotification(ctx, domain.Notification{
+				CowID: cow.ID,
+				Date:  time.Now(),
+				Type:  domain.FertilizationType,
+				Text:  domain.FertilizationText,
+			})
 		} else if !cow.IsPregnant && cow.LastFertilization.After(cow.LastOvulation) && cow.LastOvulation.Add(21*day) == today {
-			//изпрашаме аларма кравата не е бреммена заплодили сме я след последната овулация, но днес е окачвана овулация ако не е бременна. Имаме ли овулация???ако да правим датата на
+			cow.LastOvulation = today
+			//sent alarm: today is {cow number} ovulation day, we made Artificial insemination after last ovulation, is it really in ovulation? will we make Artificial insemination? --> true or false (if user press true sent a put req that will update the LastFertilization)
+			w.notificationUC.UpsertNotification(ctx, domain.Notification{
+				CowID: cow.ID,
+				Date:  time.Now(),
+				Type:  domain.OvulationType,
+				Text:  domain.OvulationAfterFertilizationText,
+			})
 		}
 	}
 }

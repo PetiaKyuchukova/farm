@@ -8,6 +8,7 @@ import (
 	"farm/backend/gen/db"
 	"farm/backend/handlers"
 	"farm/backend/usecase"
+	worker "farm/backend/worker"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
@@ -54,19 +55,25 @@ func main() {
 	if err := goose.Up(mydb, "backend/postgres/migrations"); err != nil {
 		panic(err)
 	}
+	ctx := context.Background()
 
 	querier := db.New(mydb)
 	repo := gen.NewFarmRepo(querier)
-	uc := usecase.NewCowUC(repo)
-	cowas, err := uc.GetAllCows(context.Background())
+	notificationRepo := gen.NewNotificationRepo(querier)
+	cowUc := usecase.NewCowUC(repo)
+	notificationUC := usecase.NewNotificationUC(notificationRepo)
+
+	cowas, err := cowUc.GetAllCows(context.Background())
 	fmt.Println(cowas)
 	fmt.Println("err", err)
 
-	handler := handlers.NewHandler(uc)
+	handler := handlers.NewHandler(cowUc)
 	userHandler := handlers.NewUserHandler()
 
-	router := gin.Default()
+	worker := worker.NewWorker(notificationUC, cowUc)
+	worker.Schedule(ctx, "*/5 * * * *")
 
+	router := gin.Default()
 	//publicRoutes := router.Group("/profile")
 	router.PUT("/upsert", handler.UpsertCow)
 	router.PUT("/farmer", userHandler.Register)

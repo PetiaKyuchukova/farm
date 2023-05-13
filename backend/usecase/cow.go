@@ -6,19 +6,12 @@ import (
 	"time"
 )
 
-type Interactor interface {
-	UpsertCow(ctx context.Context, id string, birthdate time.Time, colour string, motherNum string) error
-	DeleteCow(ctx context.Context, id string) error
-	GetAllCows(ctx context.Context) ([]domain.Cow, error)
-	GetCowById(ctx context.Context, id string) (*domain.Cow, error)
-}
-
 type CowsUC struct {
-	repo domain.Repo
+	repo domain.CowRepo
 }
 
-func NewCowUC(repo domain.Repo) *CowsUC {
-	return &CowsUC{repo: repo}
+func NewCowUC(repo domain.CowRepo) CowsUC {
+	return CowsUC{repo: repo}
 }
 
 func (c *CowsUC) UpsertCow(ctx context.Context, id string, birthdate time.Time, colour string, motherId string) error {

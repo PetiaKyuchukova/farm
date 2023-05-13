@@ -16,10 +16,10 @@ type Handler interface {
 	LivenessHandler(gc *gin.Context)
 }
 type defaultHandler struct {
-	uc *usecase.CowsUC
+	uc usecase.CowsUC
 }
 
-func NewHandler(uc *usecase.CowsUC) Handler {
+func NewHandler(uc usecase.CowsUC) Handler {
 	return &defaultHandler{uc}
 }
 func (h *defaultHandler) LivenessHandler(gc *gin.Context) {

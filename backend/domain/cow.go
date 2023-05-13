@@ -11,13 +11,13 @@ type Cow struct {
 	Colour            string    `json:"colour"`
 	MotherId          string    `json:"motherId"`
 	FarmerId          string    `json:"FarmerId"`
+	IsPregnant        bool      `json:"isPregnant"`
 	LastOvulation     time.Time `json:"lastOvulation"`
 	LastBirth         time.Time `json:"lastBirth"`
 	LastFertilization time.Time `json:"LastFertilization"`
-	IsPregnant        bool      `json:"isPregnant"`
 }
 
-type Repo interface {
+type CowRepo interface {
 	UpsertCow(ctx context.Context, id string, birthdate time.Time, colour string, motherNum string) error
 	DeleteCow(ctx context.Context, id string) error
 	GetAllCows(ctx context.Context) ([]Cow, error)
