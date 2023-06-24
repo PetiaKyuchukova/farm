@@ -1,5 +1,5 @@
 -- +goose Up
-CREATE TABLE notifications
+CREATE TABLE tasks
 (
     id text not null ,
     cowID text NOT NULL,

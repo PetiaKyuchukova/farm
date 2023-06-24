@@ -3,14 +3,13 @@ CREATE TABLE cows
 (
     id text NOT NULL,
     birthdate timestamp NOT NULL,
-    farmerId text NOT NULL,
+    gender text,
+    breed text,
     colour text,
     motherId text,
-    lastOvulation timestamp,
-    lastBirth timestamp,
+    fatherId text,
+    fatherBreed text,
     isPregnant boolean,
-    fertilization timestamp,
-    givingBirthDate timestamp,
 
     PRIMARY KEY (id)
 );
