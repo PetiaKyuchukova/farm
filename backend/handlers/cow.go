@@ -61,7 +61,7 @@ func (h *defaultHandler) GetAllCows(gc *gin.Context) {
 
 	cows, err := h.uc.GetAllCows(gc.Request.Context())
 	if err != nil {
-		fmt.Errorf("error getting all cows: %w", err)
+		fmt.Errorf("error getting all cows.sql: %w", err)
 		gc.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}

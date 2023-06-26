@@ -10,4 +10,4 @@ CREATE TABLE tasks
 );
 
 -- +goose Down
-DROP TABLE notifications;
+DROP TABLE tasks;

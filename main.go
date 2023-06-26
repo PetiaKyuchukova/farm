@@ -78,8 +78,8 @@ func main() {
 	router.PUT("/upsert", handler.UpsertCow)
 	router.PUT("/farmer", userHandler.Register)
 	router.DELETE("/delete/:id", handler.DeleteCow)
-	router.GET("/cows", handler.GetAllCows)
-	router.GET("/cows/:id", handler.GetCowById)
+	router.GET("/cows.sql", handler.GetAllCows)
+	router.GET("/cows.sql/:id", handler.GetCowById)
 	router.GET("/done", handler.LivenessHandler)
 
 	router.Run(":9030")

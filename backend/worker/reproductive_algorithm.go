@@ -34,11 +34,11 @@ func (w *Worker) Schedule(ctx context.Context, cronExpression string) error {
 }
 
 func (w *Worker) NotificationWorker(ctx context.Context) {
-	//get all cows from DB
+	//get all cows.sql from DB
 	cows, err := w.cowUC.GetAllCows(ctx)
 	if err != nil {
 		if err != nil {
-			fmt.Errorf("error getting all cows from database: %w", err)
+			fmt.Errorf("error getting all cows.sql from database: %w", err)
 			return
 		}
 	}
