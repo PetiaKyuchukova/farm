@@ -7,6 +7,8 @@ package db
 
 import (
 	"context"
+	"database/sql"
+	"time"
 )
 
 const getPregnanciesByCowId = `-- name: GetPregnanciesByCowId :many
@@ -40,4 +42,25 @@ func (q *Queries) GetPregnanciesByCowId(ctx context.Context, cowid string) ([]Pr
 		return nil, err
 	}
 	return items, nil
+}
+
+const upsertPregnancy = `-- name: UpsertPregnancy :exec
+INSERT INTO pregnancies(cowID,detectedAt,firstDay, lastDay) VALUES ($1, $2, $3, $4)
+`
+
+type UpsertPregnancyParams struct {
+	Cowid      string       `json:"cowid"`
+	Detectedat time.Time    `json:"detectedat"`
+	Firstday   sql.NullTime `json:"firstday"`
+	Lastday    sql.NullTime `json:"lastday"`
+}
+
+func (q *Queries) UpsertPregnancy(ctx context.Context, arg UpsertPregnancyParams) error {
+	_, err := q.exec(ctx, q.upsertPregnancyStmt, upsertPregnancy,
+		arg.Cowid,
+		arg.Detectedat,
+		arg.Firstday,
+		arg.Lastday,
+	)
+	return err
 }

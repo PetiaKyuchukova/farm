@@ -54,6 +54,12 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.upsertCowStmt, err = db.PrepareContext(ctx, upsertCow); err != nil {
 		return nil, fmt.Errorf("error preparing query UpsertCow: %w", err)
 	}
+	if q.upsertInseminationStmt, err = db.PrepareContext(ctx, upsertInsemination); err != nil {
+		return nil, fmt.Errorf("error preparing query UpsertInsemination: %w", err)
+	}
+	if q.upsertPregnancyStmt, err = db.PrepareContext(ctx, upsertPregnancy); err != nil {
+		return nil, fmt.Errorf("error preparing query UpsertPregnancy: %w", err)
+	}
 	if q.upsertTasksStmt, err = db.PrepareContext(ctx, upsertTasks); err != nil {
 		return nil, fmt.Errorf("error preparing query UpsertTasks: %w", err)
 	}
@@ -112,6 +118,16 @@ func (q *Queries) Close() error {
 			err = fmt.Errorf("error closing upsertCowStmt: %w", cerr)
 		}
 	}
+	if q.upsertInseminationStmt != nil {
+		if cerr := q.upsertInseminationStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing upsertInseminationStmt: %w", cerr)
+		}
+	}
+	if q.upsertPregnancyStmt != nil {
+		if cerr := q.upsertPregnancyStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing upsertPregnancyStmt: %w", cerr)
+		}
+	}
 	if q.upsertTasksStmt != nil {
 		if cerr := q.upsertTasksStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing upsertTasksStmt: %w", cerr)
@@ -166,6 +182,8 @@ type Queries struct {
 	getTaskByCowIdStmt          *sql.Stmt
 	getTasksByDateStmt          *sql.Stmt
 	upsertCowStmt               *sql.Stmt
+	upsertInseminationStmt      *sql.Stmt
+	upsertPregnancyStmt         *sql.Stmt
 	upsertTasksStmt             *sql.Stmt
 }
 
@@ -183,6 +201,8 @@ func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 		getTaskByCowIdStmt:          q.getTaskByCowIdStmt,
 		getTasksByDateStmt:          q.getTasksByDateStmt,
 		upsertCowStmt:               q.upsertCowStmt,
+		upsertInseminationStmt:      q.upsertInseminationStmt,
+		upsertPregnancyStmt:         q.upsertPregnancyStmt,
 		upsertTasksStmt:             q.upsertTasksStmt,
 	}
 }

@@ -8,12 +8,12 @@ import (
 	"time"
 )
 
-type FarmRepo struct {
+type CowRepo struct {
 	querier db2.Querier
 }
 
-func NewFarmRepo(querier db2.Querier) *FarmRepo {
-	return &FarmRepo{querier: querier}
+func NewCowRepo(querier db2.Querier) *CowRepo {
+	return &CowRepo{querier: querier}
 }
 func makeNullString(str string) sql.NullString {
 	if str == "" {
@@ -45,7 +45,7 @@ func makeNullTime(t time.Time) sql.NullTime {
 	}
 }
 
-func (r *FarmRepo) UpsertCow(ctx context.Context, cow domain.Cow) error {
+func (r *CowRepo) UpsertCow(ctx context.Context, cow domain.Cow) error {
 	err := r.querier.UpsertCow(ctx, db2.UpsertCowParams{
 		ID:          cow.ID,
 		Birthdate:   cow.Birthdate,
@@ -61,11 +61,11 @@ func (r *FarmRepo) UpsertCow(ctx context.Context, cow domain.Cow) error {
 	return err
 }
 
-func (r *FarmRepo) DeleteCow(ctx context.Context, id string) error {
+func (r *CowRepo) DeleteCow(ctx context.Context, id string) error {
 	err := r.querier.DeleteCow(ctx, id)
 	return err
 }
-func (r *FarmRepo) GetAllCows(ctx context.Context) ([]domain.Cow, error) {
+func (r *CowRepo) GetAllCows(ctx context.Context) ([]domain.Cow, error) {
 	rows, err := r.querier.GetAllCows(ctx)
 	cows := []domain.Cow{}
 	if err != nil {
@@ -89,7 +89,7 @@ func (r *FarmRepo) GetAllCows(ctx context.Context) ([]domain.Cow, error) {
 	}
 	return cows, err
 }
-func (r *FarmRepo) GetCowById(ctx context.Context, id string) (*domain.Cow, error) {
+func (r *CowRepo) GetCowById(ctx context.Context, id string) (*domain.Cow, error) {
 	row, err := r.querier.GetCowById(ctx, id)
 	if err != nil {
 		return nil, err
@@ -107,18 +107,6 @@ func (r *FarmRepo) GetCowById(ctx context.Context, id string) (*domain.Cow, erro
 		Ovulation:     row.Ovulation.Time,
 		Inseminations: nil,
 		Pregnancies:   nil,
-	}
-
-	pregnaniesRow, err := r.querier.GetPregnanciesByCowId(ctx, id)
-	if err != nil {
-		return nil, err
-	}
-	for _, pregnancy := range pregnaniesRow {
-		cow.Pregnancies = append(cow.Pregnancies, domain.Pregnancy{
-			DetectedAt: pregnancy.Detectedat,
-			FirstDay:   pregnancy.Firstday.Time,
-			LastDay:    pregnancy.Lastday.Time,
-		})
 	}
 
 	inseminationsRow, err := r.querier.GetInseminationsByCowId(ctx, id)

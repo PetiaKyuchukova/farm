@@ -58,7 +58,7 @@ func main() {
 	ctx := context.Background()
 
 	querier := db.New(mydb)
-	repo := gen.NewFarmRepo(querier)
+	repo := gen.NewCowRepo(querier)
 	notificationRepo := gen.NewNotificationRepo(querier)
 	cowUc := usecase.NewCowUC(repo)
 	notificationUC := usecase.NewNotificationUC(notificationRepo)

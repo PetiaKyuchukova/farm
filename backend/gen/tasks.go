@@ -7,15 +7,15 @@ import (
 	"time"
 )
 
-type NotificationRepo struct {
+type TaskRepo struct {
 	querier db.Querier
 }
 
-func NewNotificationRepo(querier db.Querier) *NotificationRepo {
-	return &NotificationRepo{querier: querier}
+func NewTaskRepo(querier db.Querier) *TaskRepo {
+	return &TaskRepo{querier: querier}
 }
 
-func (r *NotificationRepo) UpsertTask(ctx context.Context, task domain.Task) error {
+func (r *TaskRepo) UpsertTask(ctx context.Context, task domain.Task) error {
 	err := r.querier.UpsertTasks(ctx, db.UpsertTasksParams{
 		Cowid: task.CowID,
 		Date:  task.Date,
@@ -25,11 +25,11 @@ func (r *NotificationRepo) UpsertTask(ctx context.Context, task domain.Task) err
 	return err
 }
 
-func (r *NotificationRepo) DeleteTask(ctx context.Context, id string) error {
+func (r *TaskRepo) DeleteTask(ctx context.Context, id string) error {
 	err := r.querier.DeleteTask(ctx, id)
 	return err
 }
-func (r *NotificationRepo) GetAllTask(ctx context.Context) ([]domain.Task, error) {
+func (r *TaskRepo) GetAllTask(ctx context.Context) ([]domain.Task, error) {
 	rows, err := r.querier.GetAllTasks(ctx)
 	notifications := []domain.Task{}
 	if err != nil {
@@ -45,7 +45,7 @@ func (r *NotificationRepo) GetAllTask(ctx context.Context) ([]domain.Task, error
 	}
 	return notifications, err
 }
-func (r *NotificationRepo) GetTaskByCowId(ctx context.Context, cowId string) (*domain.Task, error) {
+func (r *TaskRepo) GetTaskByCowId(ctx context.Context, cowId string) (*domain.Task, error) {
 	row, err := r.querier.GetTaskByCowId(ctx, cowId)
 	if err != nil {
 		return nil, err
@@ -60,7 +60,7 @@ func (r *NotificationRepo) GetTaskByCowId(ctx context.Context, cowId string) (*d
 	return &notification, err
 }
 
-func (r *NotificationRepo) GetTasksByDate(ctx context.Context, date time.Time) ([]domain.Task, error) {
+func (r *TaskRepo) GetTasksByDate(ctx context.Context, date time.Time) ([]domain.Task, error) {
 	rows, err := r.querier.GetTasksByDate(ctx, date)
 	if err != nil {
 		return nil, err

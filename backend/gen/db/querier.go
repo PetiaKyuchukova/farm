@@ -20,6 +20,8 @@ type Querier interface {
 	GetTaskByCowId(ctx context.Context, cowid string) (Task, error)
 	GetTasksByDate(ctx context.Context, date time.Time) ([]Task, error)
 	UpsertCow(ctx context.Context, arg UpsertCowParams) error
+	UpsertInsemination(ctx context.Context, arg UpsertInseminationParams) error
+	UpsertPregnancy(ctx context.Context, arg UpsertPregnancyParams) error
 	UpsertTasks(ctx context.Context, arg UpsertTasksParams) error
 }
 

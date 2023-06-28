@@ -7,6 +7,8 @@ package db
 
 import (
 	"context"
+	"database/sql"
+	"time"
 )
 
 const getInseminationsByCowId = `-- name: GetInseminationsByCowId :many
@@ -40,4 +42,25 @@ func (q *Queries) GetInseminationsByCowId(ctx context.Context, cowid string) ([]
 		return nil, err
 	}
 	return items, nil
+}
+
+const upsertInsemination = `-- name: UpsertInsemination :exec
+INSERT INTO inseminations(cowID,date,breed, isArtificial) VALUES ($1, $2, $3,$4)
+`
+
+type UpsertInseminationParams struct {
+	Cowid        string         `json:"cowid"`
+	Date         time.Time      `json:"date"`
+	Breed        sql.NullString `json:"breed"`
+	Isartificial sql.NullBool   `json:"isartificial"`
+}
+
+func (q *Queries) UpsertInsemination(ctx context.Context, arg UpsertInseminationParams) error {
+	_, err := q.exec(ctx, q.upsertInseminationStmt, upsertInsemination,
+		arg.Cowid,
+		arg.Date,
+		arg.Breed,
+		arg.Isartificial,
+	)
+	return err
 }
