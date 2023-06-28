@@ -30,10 +30,9 @@ type Task struct {
 	Text  string    `json:"text"`
 }
 
-type NotificationRepo interface {
-	UpsertNotification(ctx context.Context, task Task) error
-	DeleteNotification(ctx context.Context, id string) error
-	GetAllNotification(ctx context.Context) ([]Task, error)
-	GetNotificationByCowId(ctx context.Context, cowId string) (*Task, error)
-	GetNotificationsByDate(ctx context.Context, date time.Time) ([]Task, error)
+type TaskRepo interface {
+	UpsertTask(ctx context.Context, task Task) error
+	DeleteTask(ctx context.Context, id string) error
+	GetAllTasks(ctx context.Context) ([]Task, error)
+	GetTasksByDate(ctx context.Context, date time.Time) ([]Task, error)
 }

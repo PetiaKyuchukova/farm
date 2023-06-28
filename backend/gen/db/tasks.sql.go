@@ -54,22 +54,38 @@ func (q *Queries) GetAllTasks(ctx context.Context) ([]Task, error) {
 	return items, nil
 }
 
-const getTaskByCowId = `-- name: GetTaskByCowId :one
+const getTaskByCowId = `-- name: GetTaskByCowId :many
 SELECT id, cowid, date, type, text FROM tasks
 where cowID =$1
 `
 
-func (q *Queries) GetTaskByCowId(ctx context.Context, cowid string) (Task, error) {
-	row := q.queryRow(ctx, q.getTaskByCowIdStmt, getTaskByCowId, cowid)
-	var i Task
-	err := row.Scan(
-		&i.ID,
-		&i.Cowid,
-		&i.Date,
-		&i.Type,
-		&i.Text,
-	)
-	return i, err
+func (q *Queries) GetTaskByCowId(ctx context.Context, cowid string) ([]Task, error) {
+	rows, err := q.query(ctx, q.getTaskByCowIdStmt, getTaskByCowId, cowid)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []Task{}
+	for rows.Next() {
+		var i Task
+		if err := rows.Scan(
+			&i.ID,
+			&i.Cowid,
+			&i.Date,
+			&i.Type,
+			&i.Text,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const getTasksByDate = `-- name: GetTasksByDate :many

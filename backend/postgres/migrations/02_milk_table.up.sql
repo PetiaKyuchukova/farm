@@ -1,10 +1,10 @@
 -- +goose Up
 CREATE TABLE milk
 (
-    date text not null ,
-    liters timestamp,
+    date timestamp not null ,
+    liters double precision,
     price double precision,
-    PRIMARY KEY (id)
+    PRIMARY KEY (date)
 );
 
 -- +goose Down

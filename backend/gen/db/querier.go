@@ -16,11 +16,13 @@ type Querier interface {
 	GetAllTasks(ctx context.Context) ([]Task, error)
 	GetCowById(ctx context.Context, id string) (Cow, error)
 	GetInseminationsByCowId(ctx context.Context, cowid string) ([]Insemination, error)
+	GetMilkInTimeframe(ctx context.Context, arg GetMilkInTimeframeParams) ([]Milk, error)
 	GetPregnanciesByCowId(ctx context.Context, cowid string) ([]Pregnancy, error)
-	GetTaskByCowId(ctx context.Context, cowid string) (Task, error)
+	GetTaskByCowId(ctx context.Context, cowid string) ([]Task, error)
 	GetTasksByDate(ctx context.Context, date time.Time) ([]Task, error)
 	UpsertCow(ctx context.Context, arg UpsertCowParams) error
 	UpsertInsemination(ctx context.Context, arg UpsertInseminationParams) error
+	UpsertMilk(ctx context.Context, arg UpsertMilkParams) error
 	UpsertPregnancy(ctx context.Context, arg UpsertPregnancyParams) error
 	UpsertTasks(ctx context.Context, arg UpsertTasksParams) error
 }

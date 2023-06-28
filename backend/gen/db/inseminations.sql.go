@@ -46,6 +46,12 @@ func (q *Queries) GetInseminationsByCowId(ctx context.Context, cowid string) ([]
 
 const upsertInsemination = `-- name: UpsertInsemination :exec
 INSERT INTO inseminations(cowID,date,breed, isArtificial) VALUES ($1, $2, $3,$4)
+    ON CONFLICT(cowID,date)
+    DO UPDATE SET
+    cowID = $1,
+    date = $2,
+    breed = $3,
+    isArtificial = $4
 `
 
 type UpsertInseminationParams struct {

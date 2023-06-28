@@ -46,6 +46,12 @@ func (q *Queries) GetPregnanciesByCowId(ctx context.Context, cowid string) ([]Pr
 
 const upsertPregnancy = `-- name: UpsertPregnancy :exec
 INSERT INTO pregnancies(cowID,detectedAt,firstDay, lastDay) VALUES ($1, $2, $3, $4)
+    ON CONFLICT(cowID,detectedAt)
+    DO UPDATE SET
+    cowID = $1,
+    detectedAt = $2,
+    firstDay = $3,
+    lastDay = $4
 `
 
 type UpsertPregnancyParams struct {

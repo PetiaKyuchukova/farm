@@ -9,7 +9,7 @@ where id =$1 ;
 SELECT * FROM tasks
 ORDER BY id ASC, type ASC;
 
--- name: GetTaskByCowId :one
+-- name: GetTaskByCowId :many
 SELECT * FROM tasks
 where cowID =$1 ;
 

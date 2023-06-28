@@ -24,12 +24,11 @@ func (r *TaskRepo) UpsertTask(ctx context.Context, task domain.Task) error {
 	})
 	return err
 }
-
 func (r *TaskRepo) DeleteTask(ctx context.Context, id string) error {
 	err := r.querier.DeleteTask(ctx, id)
 	return err
 }
-func (r *TaskRepo) GetAllTask(ctx context.Context) ([]domain.Task, error) {
+func (r *TaskRepo) GetAllTasks(ctx context.Context) ([]domain.Task, error) {
 	rows, err := r.querier.GetAllTasks(ctx)
 	notifications := []domain.Task{}
 	if err != nil {
@@ -45,21 +44,6 @@ func (r *TaskRepo) GetAllTask(ctx context.Context) ([]domain.Task, error) {
 	}
 	return notifications, err
 }
-func (r *TaskRepo) GetTaskByCowId(ctx context.Context, cowId string) (*domain.Task, error) {
-	row, err := r.querier.GetTaskByCowId(ctx, cowId)
-	if err != nil {
-		return nil, err
-	}
-	notification := domain.Task{
-		CowID: row.Cowid,
-		Date:  row.Date,
-		Type:  row.Type,
-		Text:  row.Text,
-	}
-
-	return &notification, err
-}
-
 func (r *TaskRepo) GetTasksByDate(ctx context.Context, date time.Time) ([]domain.Task, error) {
 	rows, err := r.querier.GetTasksByDate(ctx, date)
 	if err != nil {

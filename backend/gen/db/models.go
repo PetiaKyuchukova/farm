@@ -30,8 +30,8 @@ type Insemination struct {
 }
 
 type Milk struct {
-	Date   string          `json:"date"`
-	Liters sql.NullTime    `json:"liters"`
+	Date   time.Time       `json:"date"`
+	Liters sql.NullFloat64 `json:"liters"`
 	Price  sql.NullFloat64 `json:"price"`
 }
 
