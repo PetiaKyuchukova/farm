@@ -10,6 +10,7 @@ CREATE TABLE cows
     fatherId text,
     fatherBreed text,
     isPregnant boolean,
+    ovulation timestamp,
 
     PRIMARY KEY (id)
 );

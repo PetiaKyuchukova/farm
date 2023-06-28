@@ -19,6 +19,7 @@ type Cow struct {
 	Fatherid    sql.NullString `json:"fatherid"`
 	Fatherbreed sql.NullString `json:"fatherbreed"`
 	Ispregnant  sql.NullBool   `json:"ispregnant"`
+	Ovulation   sql.NullTime   `json:"ovulation"`
 }
 
 type Insemination struct {
@@ -29,8 +30,9 @@ type Insemination struct {
 }
 
 type Milk struct {
-	Date   string       `json:"date"`
-	Liters sql.NullTime `json:"liters"`
+	Date   string          `json:"date"`
+	Liters sql.NullTime    `json:"liters"`
+	Price  sql.NullFloat64 `json:"price"`
 }
 
 type Pregnancy struct {

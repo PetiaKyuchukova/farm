@@ -22,7 +22,7 @@ func (q *Queries) DeleteCow(ctx context.Context, id string) error {
 }
 
 const getAllCows = `-- name: GetAllCows :many
-SELECT id, birthdate, gender, breed, colour, motherid, fatherid, fatherbreed, ispregnant FROM cows
+SELECT id, birthdate, gender, breed, colour, motherid, fatherid, fatherbreed, ispregnant, ovulation FROM cows
 ORDER BY id ASC, birthdate ASC
 `
 
@@ -45,6 +45,7 @@ func (q *Queries) GetAllCows(ctx context.Context) ([]Cow, error) {
 			&i.Fatherid,
 			&i.Fatherbreed,
 			&i.Ispregnant,
+			&i.Ovulation,
 		); err != nil {
 			return nil, err
 		}
@@ -60,7 +61,7 @@ func (q *Queries) GetAllCows(ctx context.Context) ([]Cow, error) {
 }
 
 const getCowById = `-- name: GetCowById :one
-SELECT id, birthdate, gender, breed, colour, motherid, fatherid, fatherbreed, ispregnant FROM cows
+SELECT id, birthdate, gender, breed, colour, motherid, fatherid, fatherbreed, ispregnant, ovulation FROM cows
 where id =$1
 `
 
@@ -77,12 +78,13 @@ func (q *Queries) GetCowById(ctx context.Context, id string) (Cow, error) {
 		&i.Fatherid,
 		&i.Fatherbreed,
 		&i.Ispregnant,
+		&i.Ovulation,
 	)
 	return i, err
 }
 
 const upsertCow = `-- name: UpsertCow :exec
-INSERT INTO cows (id, birthdate,gender, breed,colour,motherId,fatherId,fatherBreed,isPregnant) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+INSERT INTO cows (id, birthdate,gender, breed,colour,motherId,fatherId,fatherBreed,isPregnant,ovulation) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
     ON CONFLICT(id)
     DO UPDATE SET
     id = $1,
@@ -93,7 +95,8 @@ INSERT INTO cows (id, birthdate,gender, breed,colour,motherId,fatherId,fatherBre
     motherId = $6,
     fatherId = $7,
     fatherBreed = $8,
-    isPregnant = $9
+    isPregnant = $9,
+    ovulation = $10
 `
 
 type UpsertCowParams struct {
@@ -106,6 +109,7 @@ type UpsertCowParams struct {
 	Fatherid    sql.NullString `json:"fatherid"`
 	Fatherbreed sql.NullString `json:"fatherbreed"`
 	Ispregnant  sql.NullBool   `json:"ispregnant"`
+	Ovulation   sql.NullTime   `json:"ovulation"`
 }
 
 func (q *Queries) UpsertCow(ctx context.Context, arg UpsertCowParams) error {
@@ -119,6 +123,7 @@ func (q *Queries) UpsertCow(ctx context.Context, arg UpsertCowParams) error {
 		arg.Fatherid,
 		arg.Fatherbreed,
 		arg.Ispregnant,
+		arg.Ovulation,
 	)
 	return err
 }

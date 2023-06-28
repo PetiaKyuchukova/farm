@@ -25,12 +25,38 @@ func makeNullString(str string) sql.NullString {
 	}
 }
 
-func (r *FarmRepo) UpsertCow(ctx context.Context, id string, birthdate time.Time, colour string, motherNum string) error {
+func makeNullBool(bl *bool) sql.NullBool {
+	if bl == nil {
+		return sql.NullBool{}
+	}
+	return sql.NullBool{
+		Bool:  *bl,
+		Valid: true,
+	}
+}
+
+func makeNullTime(t time.Time) sql.NullTime {
+	if t.IsZero() {
+		return sql.NullTime{}
+	}
+	return sql.NullTime{
+		Time:  t,
+		Valid: true,
+	}
+}
+
+func (r *FarmRepo) UpsertCow(ctx context.Context, cow domain.Cow) error {
 	err := r.querier.UpsertCow(ctx, db2.UpsertCowParams{
-		ID:        id,
-		Birthdate: birthdate,
-		Colour:    makeNullString(colour),
-		Motherid:  makeNullString(motherNum),
+		ID:          cow.ID,
+		Birthdate:   cow.Birthdate,
+		Gender:      makeNullString(cow.Gender),
+		Breed:       makeNullString(cow.Breed),
+		Colour:      makeNullString(cow.Colour),
+		Motherid:    makeNullString(cow.MotherId),
+		Fatherid:    makeNullString(cow.FarmerId),
+		Fatherbreed: makeNullString(cow.Breed),
+		Ispregnant:  makeNullBool(&cow.IsPregnant),
+		Ovulation:   makeNullTime(cow.Ovulation),
 	})
 	return err
 }
@@ -47,10 +73,18 @@ func (r *FarmRepo) GetAllCows(ctx context.Context) ([]domain.Cow, error) {
 	}
 	for _, row := range rows {
 		cows = append(cows, domain.Cow{
-			ID:        row.ID,
-			Birthdate: row.Birthdate,
-			Colour:    row.Colour.String,
-			MotherId:  row.Motherid.String,
+			ID:            row.ID,
+			Birthdate:     row.Birthdate,
+			Colour:        row.Colour.String,
+			Gender:        row.Gender.String,
+			Breed:         row.Breed.String,
+			MotherId:      row.Motherid.String,
+			FarmerId:      row.Fatherid.String,
+			FatherBreed:   row.Fatherbreed.String,
+			IsPregnant:    row.Ispregnant.Bool,
+			Ovulation:     row.Ovulation.Time,
+			Pregnancies:   nil,
+			Inseminations: nil,
 		})
 	}
 	return cows, err
@@ -61,10 +95,42 @@ func (r *FarmRepo) GetCowById(ctx context.Context, id string) (*domain.Cow, erro
 		return nil, err
 	}
 	cow := domain.Cow{
-		ID:        row.ID,
-		Birthdate: row.Birthdate,
-		Colour:    row.Colour.String,
-		MotherId:  row.Motherid.String,
+		ID:            row.ID,
+		Birthdate:     row.Birthdate,
+		Colour:        row.Colour.String,
+		Gender:        row.Gender.String,
+		Breed:         row.Breed.String,
+		MotherId:      row.Motherid.String,
+		FarmerId:      row.Fatherid.String,
+		FatherBreed:   row.Fatherbreed.String,
+		IsPregnant:    row.Ispregnant.Bool,
+		Ovulation:     row.Ovulation.Time,
+		Inseminations: nil,
+		Pregnancies:   nil,
+	}
+
+	pregnaniesRow, err := r.querier.GetPregnanciesByCowId(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	for _, pregnancy := range pregnaniesRow {
+		cow.Pregnancies = append(cow.Pregnancies, domain.Pregnancy{
+			DetectedAt: pregnancy.Detectedat,
+			FirstDay:   pregnancy.Firstday.Time,
+			LastDay:    pregnancy.Lastday.Time,
+		})
+	}
+
+	inseminationsRow, err := r.querier.GetInseminationsByCowId(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	for _, insemination := range inseminationsRow {
+		cow.Inseminations = append(cow.Inseminations, domain.Insemination{
+			Date:         insemination.Date,
+			Breed:        insemination.Breed.String,
+			IsArtificial: insemination.Isartificial.Bool,
+		})
 	}
 
 	return &cow, err

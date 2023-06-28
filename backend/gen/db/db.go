@@ -39,6 +39,12 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.getCowByIdStmt, err = db.PrepareContext(ctx, getCowById); err != nil {
 		return nil, fmt.Errorf("error preparing query GetCowById: %w", err)
 	}
+	if q.getInseminationsByCowIdStmt, err = db.PrepareContext(ctx, getInseminationsByCowId); err != nil {
+		return nil, fmt.Errorf("error preparing query GetInseminationsByCowId: %w", err)
+	}
+	if q.getPregnanciesByCowIdStmt, err = db.PrepareContext(ctx, getPregnanciesByCowId); err != nil {
+		return nil, fmt.Errorf("error preparing query GetPregnanciesByCowId: %w", err)
+	}
 	if q.getTaskByCowIdStmt, err = db.PrepareContext(ctx, getTaskByCowId); err != nil {
 		return nil, fmt.Errorf("error preparing query GetTaskByCowId: %w", err)
 	}
@@ -79,6 +85,16 @@ func (q *Queries) Close() error {
 	if q.getCowByIdStmt != nil {
 		if cerr := q.getCowByIdStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing getCowByIdStmt: %w", cerr)
+		}
+	}
+	if q.getInseminationsByCowIdStmt != nil {
+		if cerr := q.getInseminationsByCowIdStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getInseminationsByCowIdStmt: %w", cerr)
+		}
+	}
+	if q.getPregnanciesByCowIdStmt != nil {
+		if cerr := q.getPregnanciesByCowIdStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getPregnanciesByCowIdStmt: %w", cerr)
 		}
 	}
 	if q.getTaskByCowIdStmt != nil {
@@ -138,31 +154,35 @@ func (q *Queries) queryRow(ctx context.Context, stmt *sql.Stmt, query string, ar
 }
 
 type Queries struct {
-	db                 DBTX
-	tx                 *sql.Tx
-	deleteCowStmt      *sql.Stmt
-	deleteTaskStmt     *sql.Stmt
-	getAllCowsStmt     *sql.Stmt
-	getAllTasksStmt    *sql.Stmt
-	getCowByIdStmt     *sql.Stmt
-	getTaskByCowIdStmt *sql.Stmt
-	getTasksByDateStmt *sql.Stmt
-	upsertCowStmt      *sql.Stmt
-	upsertTasksStmt    *sql.Stmt
+	db                          DBTX
+	tx                          *sql.Tx
+	deleteCowStmt               *sql.Stmt
+	deleteTaskStmt              *sql.Stmt
+	getAllCowsStmt              *sql.Stmt
+	getAllTasksStmt             *sql.Stmt
+	getCowByIdStmt              *sql.Stmt
+	getInseminationsByCowIdStmt *sql.Stmt
+	getPregnanciesByCowIdStmt   *sql.Stmt
+	getTaskByCowIdStmt          *sql.Stmt
+	getTasksByDateStmt          *sql.Stmt
+	upsertCowStmt               *sql.Stmt
+	upsertTasksStmt             *sql.Stmt
 }
 
 func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 	return &Queries{
-		db:                 tx,
-		tx:                 tx,
-		deleteCowStmt:      q.deleteCowStmt,
-		deleteTaskStmt:     q.deleteTaskStmt,
-		getAllCowsStmt:     q.getAllCowsStmt,
-		getAllTasksStmt:    q.getAllTasksStmt,
-		getCowByIdStmt:     q.getCowByIdStmt,
-		getTaskByCowIdStmt: q.getTaskByCowIdStmt,
-		getTasksByDateStmt: q.getTasksByDateStmt,
-		upsertCowStmt:      q.upsertCowStmt,
-		upsertTasksStmt:    q.upsertTasksStmt,
+		db:                          tx,
+		tx:                          tx,
+		deleteCowStmt:               q.deleteCowStmt,
+		deleteTaskStmt:              q.deleteTaskStmt,
+		getAllCowsStmt:              q.getAllCowsStmt,
+		getAllTasksStmt:             q.getAllTasksStmt,
+		getCowByIdStmt:              q.getCowByIdStmt,
+		getInseminationsByCowIdStmt: q.getInseminationsByCowIdStmt,
+		getPregnanciesByCowIdStmt:   q.getPregnanciesByCowIdStmt,
+		getTaskByCowIdStmt:          q.getTaskByCowIdStmt,
+		getTasksByDateStmt:          q.getTasksByDateStmt,
+		upsertCowStmt:               q.upsertCowStmt,
+		upsertTasksStmt:             q.upsertTasksStmt,
 	}
 }

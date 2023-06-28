@@ -15,6 +15,8 @@ type Querier interface {
 	GetAllCows(ctx context.Context) ([]Cow, error)
 	GetAllTasks(ctx context.Context) ([]Task, error)
 	GetCowById(ctx context.Context, id string) (Cow, error)
+	GetInseminationsByCowId(ctx context.Context, cowid string) ([]Insemination, error)
+	GetPregnanciesByCowId(ctx context.Context, cowid string) ([]Pregnancy, error)
 	GetTaskByCowId(ctx context.Context, cowid string) (Task, error)
 	GetTasksByDate(ctx context.Context, date time.Time) ([]Task, error)
 	UpsertCow(ctx context.Context, arg UpsertCowParams) error

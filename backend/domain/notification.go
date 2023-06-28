@@ -22,7 +22,7 @@ const (
 	GivingBirthText                 = "Today we expect the cow is going to giving birth. Did the cow gave birth today?"
 )
 
-type Notification struct {
+type Task struct {
 	ID    uuid.UUID `json:"id"`
 	CowID string    `json:"cow_id"`
 	Date  time.Time `json:"date"`
@@ -31,9 +31,9 @@ type Notification struct {
 }
 
 type NotificationRepo interface {
-	UpsertNotification(ctx context.Context, notification Notification) error
+	UpsertNotification(ctx context.Context, task Task) error
 	DeleteNotification(ctx context.Context, id string) error
-	GetAllNotification(ctx context.Context) ([]Notification, error)
-	GetNotificationByCowId(ctx context.Context, cowId string) (*Notification, error)
-	GetNotificationsByDate(ctx context.Context, date time.Time) ([]Notification, error)
+	GetAllNotification(ctx context.Context) ([]Task, error)
+	GetNotificationByCowId(ctx context.Context, cowId string) (*Task, error)
+	GetNotificationsByDate(ctx context.Context, date time.Time) ([]Task, error)
 }
