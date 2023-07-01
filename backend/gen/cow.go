@@ -15,25 +15,6 @@ type CowRepo struct {
 func NewCowRepo(querier db2.Querier) *CowRepo {
 	return &CowRepo{querier: querier}
 }
-func makeNullString(str string) sql.NullString {
-	if str == "" {
-		return sql.NullString{}
-	}
-	return sql.NullString{
-		String: str,
-		Valid:  true,
-	}
-}
-
-func makeNullBool(bl *bool) sql.NullBool {
-	if bl == nil {
-		return sql.NullBool{}
-	}
-	return sql.NullBool{
-		Bool:  *bl,
-		Valid: true,
-	}
-}
 
 func makeNullTime(t time.Time) sql.NullTime {
 	if t.IsZero() {
