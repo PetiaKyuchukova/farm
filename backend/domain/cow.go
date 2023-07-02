@@ -20,18 +20,6 @@ type Cow struct {
 	Inseminations []Insemination `json:"inseminations"`
 }
 
-type Pregnancy struct {
-	DetectedAt time.Time `json:"detectedAt"`
-	FirstDay   time.Time `json:"firstDay"`
-	LastDay    time.Time `json:"lastDay"`
-}
-
-type Insemination struct {
-	Date         time.Time `json:"date"`
-	Breed        string    `json:"breed"`
-	IsArtificial bool      `json:"IsArtificial"`
-}
-
 type CowRepo interface {
 	UpsertCow(ctx context.Context, cow Cow) error
 	DeleteCow(ctx context.Context, id string) error
