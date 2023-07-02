@@ -12,7 +12,7 @@ type Cow struct {
 	Gender        string         `json:"gender"`
 	Breed         string         `json:"breed"`
 	MotherId      string         `json:"motherId"`
-	FarmerId      string         `json:"FarmerId"`
+	FarmerId      string         `json:"farmerId"`
 	FatherBreed   string         `json:"fatherBreed"`
 	IsPregnant    bool           `json:"isPregnant"`
 	Ovulation     time.Time      `json:"ovulation"`

@@ -1,6 +1,6 @@
 import { customElement, property} from 'lit/decorators.js'
 import { LitElement, html } from 'lit'
-import {Data} from "./cow.type";
+import {Cow} from "./cow.type.ts";
 
 @customElement('my-page')
 export class MyPage extends LitElement {
@@ -8,7 +8,7 @@ export class MyPage extends LitElement {
     error = ''
 
     @property({attribute: false, type: Array})
-    data: Data[]
+    data: Cow[]
 
 
     @property({attribute: false, type: Boolean})
@@ -41,9 +41,9 @@ export class MyPage extends LitElement {
     }
 
     render() {
-        let i = ""
+        let i = "55"
         if (this.data!=undefined){
-            i = this.data[0].Id
+            i = this.data[0].id
         }
         console.log(this.data)
 
