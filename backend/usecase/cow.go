@@ -12,8 +12,12 @@ type CowsUC struct {
 	inseminationRepo domain.InseminationRepo
 }
 
-func NewCowUC(repo domain.CowRepo) CowsUC {
-	return CowsUC{repo: repo}
+func NewCowUC(repo domain.CowRepo, pregnancyRepo domain.PregnancyRepo, inseminationRepo domain.InseminationRepo) CowsUC {
+	return CowsUC{
+		repo:             repo,
+		pregnancyRepo:    pregnancyRepo,
+		inseminationRepo: inseminationRepo,
+	}
 }
 
 func (c *CowsUC) UpsertCow(ctx context.Context, cow domain.Cow) error {

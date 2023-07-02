@@ -57,30 +57,40 @@ func main() {
 	}
 	ctx := context.Background()
 
+	//repositories
 	querier := db.New(mydb)
 	repo := gen.NewCowRepo(querier)
-	notificationRepo := gen.NewNotificationRepo(querier)
-	cowUc := usecase.NewCowUC(repo)
-	notificationUC := usecase.NewNotificationUC(notificationRepo)
+	taskRepo := gen.NewTaskRepo(querier)
+	cowRepo := gen.NewCowRepo(querier)
+	milkRepo := gen.NewMilkRepo(querier)
+	inseminationRepo := gen.NewInseminationRepo(querier)
+	pregnancyRepo := gen.NewPregnancyRepo(querier)
 
-	cowas, err := cowUc.GetAllCows(context.Background())
-	fmt.Println(cowas)
-	fmt.Println("err", err)
+	//use-cases
+	cowUc := usecase.NewCowUC(cowRepo, pregnancyRepo, inseminationRepo)
+	taskUC := usecase.NewTaskUC(taskRepo)
+	milkUC := usecase.NewMilkUC(milkRepo)
 
-	handler := handlers.NewHandler(cowUc)
-	userHandler := handlers.NewUserHandler()
+	//handlers
+	cowHandler := handlers.NewCowHandler(cowUc)
+	taskHandler := handlers.NewTaskHandler(taskUC)
+	milkHandler := handlers.NewMilkHandler(milkUC)
 
-	worker := worker.NewWorker(notificationUC, cowUc)
+	worker := worker.NewWorker(taskUC, cowUc)
 	worker.Schedule(ctx, "*/5 * * * *")
 
 	router := gin.Default()
-	//publicRoutes := router.Group("/profile")
-	router.PUT("/upsert", handler.UpsertCow)
-	router.PUT("/farmer", userHandler.Register)
-	router.DELETE("/delete/:id", handler.DeleteCow)
-	router.GET("/cows.sql", handler.GetAllCows)
-	router.GET("/cows.sql/:id", handler.GetCowById)
-	router.GET("/done", handler.LivenessHandler)
+	router.GET("/done", cowHandler.LivenessHandler)
+	
+	router.PUT("/upsert", cowHandler.UpsertCow)
+	router.DELETE("/delete/:id", cowHandler.DeleteCow)
+	router.GET("/cows", cowHandler.GetAllCows)
+	router.GET("/cows/:id", cowHandler.GetCowById)
+
+	router.GET("/tasks", taskHandler.GetTasksByDate)
+
+	router.PUT("/milk", milkHandler.UpsertMilk)
+	router.GET("/milk", milkHandler.FetchMilkSeriesInTimeframe)
 
 	router.Run(":9030")
 	fmt.Println("Server running on port 3030")

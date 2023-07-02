@@ -12,15 +12,15 @@ import (
 //put handler to update the LastFertilization (need cowId)
 
 type TaskHandler interface {
+	GetTasksByDate(gc *gin.Context)
 }
 
 type defaultTaskHandler struct {
-	cowUC  *usecase.CowsUC
-	taskUC *usecase.TaskUC
+	taskUC usecase.TaskUC
 }
 
-func NewTaskHandler(cow *usecase.CowsUC, task *usecase.TaskUC) TaskHandler {
-	return &defaultTaskHandler{cow, task}
+func NewTaskHandler(task usecase.TaskUC) TaskHandler {
+	return &defaultTaskHandler{task}
 }
 
 func (h *defaultTaskHandler) GetTasksByDate(gc *gin.Context) {

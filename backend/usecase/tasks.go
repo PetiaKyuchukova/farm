@@ -10,7 +10,7 @@ type TaskUC struct {
 	repo domain.TaskRepo
 }
 
-func NewNotificationUC(repo domain.TaskRepo) TaskUC {
+func NewTaskUC(repo domain.TaskRepo) TaskUC {
 	return TaskUC{repo: repo}
 }
 

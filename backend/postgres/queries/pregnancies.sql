@@ -1,6 +1,6 @@
 -- name: GetPregnanciesByCowId :many
 SELECT * FROM pregnancies
-where cowId =$1 ;
+where cowId =$1 order by detectedAt DESC;
 
 -- name: UpsertPregnancy :exec
 INSERT INTO pregnancies(cowID,detectedAt,firstDay, lastDay) VALUES (@cowID, @detectedAt, @firstDay, @lastDay)

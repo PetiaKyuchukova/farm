@@ -23,7 +23,7 @@ func (q *Queries) DeleteInsemination(ctx context.Context, cowid string) error {
 
 const getInseminationsByCowId = `-- name: GetInseminationsByCowId :many
 SELECT cowid, date, breed, isartificial FROM inseminations
-where cowId =$1
+where cowId =$1 order by date DESC
 `
 
 func (q *Queries) GetInseminationsByCowId(ctx context.Context, cowid string) ([]Insemination, error) {

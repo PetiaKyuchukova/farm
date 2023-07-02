@@ -1,6 +1,6 @@
 -- name: GetInseminationsByCowId :many
 SELECT * FROM inseminations
-where cowId =$1 ;
+where cowId =$1 order by date DESC ;
 
 -- name: UpsertInsemination :exec
 INSERT INTO inseminations(cowID,date,breed, isArtificial) VALUES (@cowID, @date, @breed,@isArtificial)

@@ -19,7 +19,7 @@ type defaultHandler struct {
 	uc usecase.CowsUC
 }
 
-func NewHandler(uc usecase.CowsUC) Handler {
+func NewCowHandler(uc usecase.CowsUC) Handler {
 	return &defaultHandler{uc}
 }
 func (h *defaultHandler) LivenessHandler(gc *gin.Context) {

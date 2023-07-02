@@ -23,7 +23,7 @@ func (q *Queries) DeletePregnancy(ctx context.Context, cowid string) error {
 
 const getPregnanciesByCowId = `-- name: GetPregnanciesByCowId :many
 SELECT cowid, detectedat, firstday, lastday FROM pregnancies
-where cowId =$1
+where cowId =$1 order by detectedAt DESC
 `
 
 func (q *Queries) GetPregnanciesByCowId(ctx context.Context, cowid string) ([]Pregnancy, error) {
