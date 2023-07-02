@@ -11,6 +11,16 @@ import (
 	"time"
 )
 
+const deleteInsemination = `-- name: DeleteInsemination :exec
+DELETE FROM inseminations
+where cowID =$1
+`
+
+func (q *Queries) DeleteInsemination(ctx context.Context, cowid string) error {
+	_, err := q.exec(ctx, q.deleteInseminationStmt, deleteInsemination, cowid)
+	return err
+}
+
 const getInseminationsByCowId = `-- name: GetInseminationsByCowId :many
 SELECT cowid, date, breed, isartificial FROM inseminations
 where cowId =$1

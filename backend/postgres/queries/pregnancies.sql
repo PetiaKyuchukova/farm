@@ -11,4 +11,6 @@ INSERT INTO pregnancies(cowID,detectedAt,firstDay, lastDay) VALUES (@cowID, @det
     firstDay = @firstDay,
     lastDay = @lastDay;
 
-
+-- name: DeletePregnancy :exec
+DELETE FROM pregnancies
+where cowID =$1;

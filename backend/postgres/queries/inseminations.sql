@@ -11,4 +11,6 @@ INSERT INTO inseminations(cowID,date,breed, isArtificial) VALUES (@cowID, @date,
     breed = @breed,
     isArtificial = @isArtificial;
 
-
+-- name: DeleteInsemination :exec
+DELETE FROM inseminations
+where cowID =$1;

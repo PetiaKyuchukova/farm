@@ -11,6 +11,8 @@ import (
 
 type Querier interface {
 	DeleteCow(ctx context.Context, id string) error
+	DeleteInsemination(ctx context.Context, cowid string) error
+	DeletePregnancy(ctx context.Context, cowid string) error
 	DeleteTask(ctx context.Context, id string) error
 	GetAllCows(ctx context.Context) ([]Cow, error)
 	GetAllTasks(ctx context.Context) ([]Task, error)

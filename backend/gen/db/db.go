@@ -27,6 +27,12 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.deleteCowStmt, err = db.PrepareContext(ctx, deleteCow); err != nil {
 		return nil, fmt.Errorf("error preparing query DeleteCow: %w", err)
 	}
+	if q.deleteInseminationStmt, err = db.PrepareContext(ctx, deleteInsemination); err != nil {
+		return nil, fmt.Errorf("error preparing query DeleteInsemination: %w", err)
+	}
+	if q.deletePregnancyStmt, err = db.PrepareContext(ctx, deletePregnancy); err != nil {
+		return nil, fmt.Errorf("error preparing query DeletePregnancy: %w", err)
+	}
 	if q.deleteTaskStmt, err = db.PrepareContext(ctx, deleteTask); err != nil {
 		return nil, fmt.Errorf("error preparing query DeleteTask: %w", err)
 	}
@@ -77,6 +83,16 @@ func (q *Queries) Close() error {
 	if q.deleteCowStmt != nil {
 		if cerr := q.deleteCowStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing deleteCowStmt: %w", cerr)
+		}
+	}
+	if q.deleteInseminationStmt != nil {
+		if cerr := q.deleteInseminationStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing deleteInseminationStmt: %w", cerr)
+		}
+	}
+	if q.deletePregnancyStmt != nil {
+		if cerr := q.deletePregnancyStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing deletePregnancyStmt: %w", cerr)
 		}
 	}
 	if q.deleteTaskStmt != nil {
@@ -189,6 +205,8 @@ type Queries struct {
 	db                          DBTX
 	tx                          *sql.Tx
 	deleteCowStmt               *sql.Stmt
+	deleteInseminationStmt      *sql.Stmt
+	deletePregnancyStmt         *sql.Stmt
 	deleteTaskStmt              *sql.Stmt
 	getAllCowsStmt              *sql.Stmt
 	getAllTasksStmt             *sql.Stmt
@@ -210,6 +228,8 @@ func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 		db:                          tx,
 		tx:                          tx,
 		deleteCowStmt:               q.deleteCowStmt,
+		deleteInseminationStmt:      q.deleteInseminationStmt,
+		deletePregnancyStmt:         q.deletePregnancyStmt,
 		deleteTaskStmt:              q.deleteTaskStmt,
 		getAllCowsStmt:              q.getAllCowsStmt,
 		getAllTasksStmt:             q.getAllTasksStmt,

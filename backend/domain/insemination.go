@@ -14,4 +14,5 @@ type Insemination struct {
 type InseminationRepo interface {
 	UpsertInsemination(ctx context.Context, insemination Insemination, cowId string) error
 	GetInseminationsByCowID(ctx context.Context, id string) ([]Insemination, error)
+	DeleteInseminations(ctx context.Context, id string) error
 }

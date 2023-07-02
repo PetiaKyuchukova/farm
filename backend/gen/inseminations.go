@@ -44,3 +44,12 @@ func (r *InseminationRepo) GetInseminationsByCowID(ctx context.Context, id strin
 
 	return inseminations, nil
 }
+
+func (r *InseminationRepo) DeleteInseminations(ctx context.Context, id string) error {
+	err := r.querier.DeleteInsemination(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

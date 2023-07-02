@@ -42,8 +42,26 @@ func (c *CowsUC) UpsertCow(ctx context.Context, cow domain.Cow) error {
 	return nil
 }
 
-func (c *CowsUC) DeleteCow(ctx context.Context, id string) error {
-	return c.repo.DeleteCow(ctx, id)
+func (c *CowsUC) DeleteCowEntry(ctx context.Context, id string) error {
+	err := c.repo.DeleteCow(ctx, id)
+	if err != nil {
+		fmt.Errorf("error deleting cow: %w", err)
+		return err
+	}
+
+	err = c.pregnancyRepo.DeletePregnancies(ctx, id)
+	if err != nil {
+		fmt.Errorf("error deleting pregnancies of cow: %w", err)
+		return err
+	}
+
+	err = c.inseminationRepo.DeleteInseminations(ctx, id)
+	if err != nil {
+		fmt.Errorf("error deleting inseminations of coe: %w", err)
+		return err
+	}
+
+	return nil
 }
 
 func (c *CowsUC) GetAllCows(ctx context.Context) ([]domain.Cow, error) {
@@ -73,7 +91,7 @@ func (c *CowsUC) GetAllCows(ctx context.Context) ([]domain.Cow, error) {
 	return cows, nil
 }
 
-func (c *CowsUC) GetCowById(ctx context.Context, id string) (*domain.Cow, error) {
+func (c *CowsUC) GetCowEntryById(ctx context.Context, id string) (*domain.Cow, error) {
 	cow, err := c.repo.GetCowById(ctx, id)
 	if err != nil {
 		fmt.Errorf("error getting cow: %w", err)
@@ -89,7 +107,7 @@ func (c *CowsUC) GetCowById(ctx context.Context, id string) (*domain.Cow, error)
 	if err != nil {
 		fmt.Errorf("err getting inseminations: %w", err)
 	}
-	
+
 	cow.Pregnancies = pregnancies
 	cow.Inseminations = insemination
 

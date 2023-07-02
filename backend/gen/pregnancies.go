@@ -44,3 +44,12 @@ func (r *PregnancyRepo) GetPregnanciesByCowID(ctx context.Context, id string) ([
 
 	return pregnancies, nil
 }
+
+func (r *PregnancyRepo) DeletePregnancies(ctx context.Context, id string) error {
+	err := r.querier.DeletePregnancy(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

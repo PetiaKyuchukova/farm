@@ -33,7 +33,7 @@ func (h *defaultHandler) UpsertCow(gc *gin.Context) {
 		gc.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	err := h.uc.UpsertCow(gc.Request.Context(), cow.ID, cow.Birthdate, cow.Colour, cow.MotherId)
+	err := h.uc.UpsertCow(gc.Request.Context(), cow)
 	if err != nil {
 		fmt.Errorf("error upserting cow: %w", err)
 		gc.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -46,7 +46,7 @@ func (h *defaultHandler) UpsertCow(gc *gin.Context) {
 func (h *defaultHandler) DeleteCow(gc *gin.Context) {
 	id := gc.Param("id")
 
-	err := h.uc.DeleteCow(gc.Request.Context(), id)
+	err := h.uc.DeleteCowEntry(gc.Request.Context(), id)
 	if err != nil {
 		fmt.Errorf("error deleting cow: %w", err)
 		gc.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -71,7 +71,7 @@ func (h *defaultHandler) GetAllCows(gc *gin.Context) {
 func (h *defaultHandler) GetCowById(gc *gin.Context) {
 	id := gc.Param("id")
 
-	cow, err := h.uc.GetCowById(gc.Request.Context(), id)
+	cow, err := h.uc.GetCowEntryById(gc.Request.Context(), id)
 	if err != nil {
 		fmt.Errorf("error getting cow by id: %w", err)
 		gc.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
