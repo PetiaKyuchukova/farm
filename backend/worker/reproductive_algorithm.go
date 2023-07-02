@@ -47,6 +47,10 @@ func (w *Worker) TaskWorker(ctx context.Context) {
 	day := time.Hour * 24
 	//save alarms to db then frontend will fetch them for current day
 	for _, cow := range cows {
+		if len(cow.Inseminations) == 0 {
+			continue
+		}
+
 		if cow.Inseminations[0].Date.Add(36*day) == today {
 			//sent alarm: to check pregnancy. Is this cow pregnant? --> true or false (if user press yes, sent a put req to update IsPregnant to true)
 			w.taskUC.UpsertTask(ctx, domain.Task{

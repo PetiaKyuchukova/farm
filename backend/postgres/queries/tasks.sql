@@ -3,11 +3,11 @@ INSERT INTO tasks(cowID,date,type, text) VALUES (@cowID, @date, @type,@text);
 
 -- name: DeleteTask :exec
 DELETE FROM tasks
-where id =$1 ;
+where cowID =$1 ;
 
 -- name: GetAllTasks :many
 SELECT * FROM tasks
-ORDER BY id ASC, type ASC;
+ORDER BY cowID ASC, date ASC;
 
 -- name: GetTaskByCowId :many
 SELECT * FROM tasks

@@ -43,7 +43,6 @@ type Pregnancy struct {
 }
 
 type Task struct {
-	ID    string    `json:"id"`
 	Cowid string    `json:"cowid"`
 	Date  time.Time `json:"date"`
 	Type  string    `json:"type"`

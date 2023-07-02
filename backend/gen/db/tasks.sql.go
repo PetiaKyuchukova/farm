@@ -12,17 +12,17 @@ import (
 
 const deleteTask = `-- name: DeleteTask :exec
 DELETE FROM tasks
-where id =$1
+where cowID =$1
 `
 
-func (q *Queries) DeleteTask(ctx context.Context, id string) error {
-	_, err := q.exec(ctx, q.deleteTaskStmt, deleteTask, id)
+func (q *Queries) DeleteTask(ctx context.Context, cowid string) error {
+	_, err := q.exec(ctx, q.deleteTaskStmt, deleteTask, cowid)
 	return err
 }
 
 const getAllTasks = `-- name: GetAllTasks :many
-SELECT id, cowid, date, type, text FROM tasks
-ORDER BY id ASC, type ASC
+SELECT cowid, date, type, text FROM tasks
+ORDER BY cowID ASC, date ASC
 `
 
 func (q *Queries) GetAllTasks(ctx context.Context) ([]Task, error) {
@@ -35,7 +35,6 @@ func (q *Queries) GetAllTasks(ctx context.Context) ([]Task, error) {
 	for rows.Next() {
 		var i Task
 		if err := rows.Scan(
-			&i.ID,
 			&i.Cowid,
 			&i.Date,
 			&i.Type,
@@ -55,7 +54,7 @@ func (q *Queries) GetAllTasks(ctx context.Context) ([]Task, error) {
 }
 
 const getTaskByCowId = `-- name: GetTaskByCowId :many
-SELECT id, cowid, date, type, text FROM tasks
+SELECT cowid, date, type, text FROM tasks
 where cowID =$1
 `
 
@@ -69,7 +68,6 @@ func (q *Queries) GetTaskByCowId(ctx context.Context, cowid string) ([]Task, err
 	for rows.Next() {
 		var i Task
 		if err := rows.Scan(
-			&i.ID,
 			&i.Cowid,
 			&i.Date,
 			&i.Type,
@@ -89,7 +87,7 @@ func (q *Queries) GetTaskByCowId(ctx context.Context, cowid string) ([]Task, err
 }
 
 const getTasksByDate = `-- name: GetTasksByDate :many
-SELECT id, cowid, date, type, text FROM tasks
+SELECT cowid, date, type, text FROM tasks
 where date =$1
 `
 
@@ -103,7 +101,6 @@ func (q *Queries) GetTasksByDate(ctx context.Context, date time.Time) ([]Task, e
 	for rows.Next() {
 		var i Task
 		if err := rows.Scan(
-			&i.ID,
 			&i.Cowid,
 			&i.Date,
 			&i.Type,

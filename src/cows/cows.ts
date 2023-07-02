@@ -2,8 +2,8 @@ import { customElement, property} from 'lit/decorators.js'
 import { LitElement, html } from 'lit'
 import {Cow} from "./cow.type.ts";
 
-@customElement('my-page')
-export class MyPage extends LitElement {
+@customElement('farm-herd')
+export class FarmHerd extends LitElement {
     @property({attribute: false, type: String})
     error = ''
 
@@ -51,8 +51,6 @@ export class MyPage extends LitElement {
         return html`
             <h1>Hello</h1>
             id: ${i}
-      
-         
         `}
 }
 

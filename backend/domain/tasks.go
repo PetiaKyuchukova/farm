@@ -2,7 +2,6 @@ package domain
 
 import (
 	"context"
-	"github.com/google/uuid"
 	"time"
 )
 
@@ -23,7 +22,6 @@ const (
 )
 
 type Task struct {
-	ID    uuid.UUID `json:"id"`
 	CowID string    `json:"cow_id"`
 	Date  time.Time `json:"date"`
 	Type  string    `json:"type"`

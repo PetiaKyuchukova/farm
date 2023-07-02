@@ -10,6 +10,7 @@ import (
 	"farm/backend/usecase"
 	worker "farm/backend/worker"
 	"fmt"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
 	"github.com/pressly/goose/v3"
@@ -79,6 +80,12 @@ func main() {
 	worker.Schedule(ctx, "*/5 * * * *")
 
 	router := gin.Default()
+	config := cors.DefaultConfig()
+	config.AllowOrigins = []string{"http://localhost:5173"}
+	// config.AllowOrigins = []string{"http://google.com", "http://facebook.com"}
+	// config.AllowAllOrigins = true
+
+	router.Use(cors.New(config))
 	router.GET("/done", cowHandler.LivenessHandler)
 
 	router.PUT("/upsert", cowHandler.UpsertCow)
