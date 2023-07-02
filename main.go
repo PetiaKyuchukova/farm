@@ -19,7 +19,7 @@ const (
 	host     = "localhost"
 	port     = 5432
 	user     = "postgres"
-	password = "0041129115"
+	password = "471219011"
 	dbname   = "farm"
 )
 
@@ -59,7 +59,6 @@ func main() {
 
 	//repositories
 	querier := db.New(mydb)
-	repo := gen.NewCowRepo(querier)
 	taskRepo := gen.NewTaskRepo(querier)
 	cowRepo := gen.NewCowRepo(querier)
 	milkRepo := gen.NewMilkRepo(querier)
@@ -81,7 +80,7 @@ func main() {
 
 	router := gin.Default()
 	router.GET("/done", cowHandler.LivenessHandler)
-	
+
 	router.PUT("/upsert", cowHandler.UpsertCow)
 	router.DELETE("/delete/:id", cowHandler.DeleteCow)
 	router.GET("/cows", cowHandler.GetAllCows)
