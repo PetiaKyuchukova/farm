@@ -10,11 +10,11 @@ import (
 )
 
 type Worker struct {
-	notificationUC usecase.NotificationUC
+	notificationUC usecase.TaskUC
 	cowUC          usecase.CowsUC
 }
 
-func NewWorker(notificationUC usecase.NotificationUC, cowUC usecase.CowsUC) *Worker {
+func NewWorker(notificationUC usecase.TaskUC, cowUC usecase.CowsUC) *Worker {
 	return &Worker{notificationUC: notificationUC, cowUC: cowUC}
 }
 

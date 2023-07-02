@@ -6,26 +6,26 @@ import (
 	"time"
 )
 
-type NotificationUC struct {
+type TaskUC struct {
 	repo domain.TaskRepo
 }
 
-func NewNotificationUC(repo domain.TaskRepo) NotificationUC {
-	return NotificationUC{repo: repo}
+func NewNotificationUC(repo domain.TaskRepo) TaskUC {
+	return TaskUC{repo: repo}
 }
 
-func (c *NotificationUC) UpsertTask(ctx context.Context, notification domain.Task) error {
+func (c *TaskUC) UpsertTask(ctx context.Context, notification domain.Task) error {
 	return c.repo.UpsertTask(ctx, notification)
 }
 
-func (c *NotificationUC) DeleteTask(ctx context.Context, id string) error {
+func (c *TaskUC) DeleteTask(ctx context.Context, id string) error {
 	return c.repo.DeleteTask(ctx, id)
 }
 
-func (c *NotificationUC) FetchAllTasks(ctx context.Context) ([]domain.Task, error) {
+func (c *TaskUC) FetchAllTasks(ctx context.Context) ([]domain.Task, error) {
 	return c.repo.GetAllTasks(ctx)
 }
 
-func (c *NotificationUC) FetchTasksByDate(ctx context.Context, date time.Time) ([]domain.Task, error) {
+func (c *TaskUC) FetchTasksByDate(ctx context.Context, date time.Time) ([]domain.Task, error) {
 	return c.repo.GetTasksByDate(ctx, date)
 }

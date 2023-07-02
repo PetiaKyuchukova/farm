@@ -23,7 +23,7 @@ func NewHandler(uc usecase.CowsUC) Handler {
 	return &defaultHandler{uc}
 }
 func (h *defaultHandler) LivenessHandler(gc *gin.Context) {
-	gc.String(http.StatusOK, "all ok from control webapp")
+	gc.String(http.StatusOK, "all ok from farm manager")
 }
 func (h *defaultHandler) UpsertCow(gc *gin.Context) {
 	var cow domain.Cow
