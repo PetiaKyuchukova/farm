@@ -1,15 +1,21 @@
-import { customElement, property} from 'lit/decorators.js'
-import { LitElement, html } from 'lit'
+import { customElement, property, state} from 'lit/decorators.js'
+import { LitElement, html, nothing } from 'lit'
 import {Task} from "./task.type.ts";
+import "../cows/cows.ts"
 
 @customElement('farm-tasks')
 export class FarmTasks extends LitElement {
+
+
+
     @property({attribute: false, type: String})
     error = ''
 
     @property({attribute: false, type: Array})
     data: Task[]
 
+    @state()
+    private visible = false
 
     @property({attribute: false, type: Boolean})
     isLoading = false
@@ -35,11 +41,14 @@ export class FarmTasks extends LitElement {
         })
     }
 
-
+    private redirectTo(e) {
+        this.visible = true
+    }
     firstUpdated() {
         this.fetchData()
     }
     render() {
+
         let i = "55"
         if (this.data!=undefined){
             i = this.data[0].cow_id
@@ -48,8 +57,11 @@ export class FarmTasks extends LitElement {
 
 
         return html`
+            <farm-herd id="herd" visible="true"></farm-herd>
             <h1>Tasks</h1>
-            id: ${i}
+            <button @click=${this.redirectTo}>cow profile</button>
+            
+            
         `}
 
 }

@@ -7,6 +7,9 @@ export class FarmHerd extends LitElement {
     @property({attribute: false, type: String})
     error = ''
 
+    @property({attribute: true, type: Boolean})
+    visible = false
+
     @property({attribute: false, type: Array})
     data: Cow[]
 
@@ -35,6 +38,10 @@ export class FarmHerd extends LitElement {
         })
     }
 
+    private redirectTo(e) {
+        this.visible = false
+    }
+
 
     firstUpdated() {
         this.fetchData()
@@ -45,12 +52,17 @@ export class FarmHerd extends LitElement {
         if (this.data!=undefined){
             i = this.data[0].id
         }
-        console.log(this.data)
+        console.log("from cows.", this.data)
 
 
         return html`
-            <h1>Hello</h1>
-            id: ${i}
+            <div ?hidden=${!this.visible}>
+
+                <h1>Hello</h1>
+                <button @click=${this.redirectTo}>close</button>
+                id: ${i}
+            </div>
+           
         `}
 }
 

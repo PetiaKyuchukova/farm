@@ -14,6 +14,7 @@ type Handler interface {
 	GetAllCows(gc *gin.Context)
 	GetCowById(gc *gin.Context)
 	LivenessHandler(gc *gin.Context)
+	RenderTemplate(gc *gin.Context)
 }
 type defaultHandler struct {
 	uc usecase.CowsUC
@@ -79,4 +80,13 @@ func (h *defaultHandler) GetCowById(gc *gin.Context) {
 	}
 
 	gc.JSON(http.StatusOK, cow)
+
+}
+
+func (h *defaultHandler) RenderTemplate(gc *gin.Context) {
+	id := gc.Param("id")
+
+	gc.HTML(http.StatusOK, "cowProfile.gohtml", gin.H{
+		"Id": id,
+	})
 }

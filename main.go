@@ -80,13 +80,14 @@ func main() {
 	worker.Schedule(ctx, "*/5 * * * *")
 
 	router := gin.Default()
+	router.LoadHTMLGlob("src/pages/*.gohtml")
+
 	config := cors.DefaultConfig()
 	config.AllowOrigins = []string{"http://localhost:5173"}
-	// config.AllowOrigins = []string{"http://google.com", "http://facebook.com"}
-	// config.AllowAllOrigins = true
 
 	router.Use(cors.New(config))
 	router.GET("/done", cowHandler.LivenessHandler)
+	router.GET("/template/:id", cowHandler.RenderTemplate)
 
 	router.PUT("/upsert", cowHandler.UpsertCow)
 	router.DELETE("/delete/:id", cowHandler.DeleteCow)
