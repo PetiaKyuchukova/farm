@@ -1,24 +1,43 @@
-import { customElement, property, state} from 'lit/decorators.js'
-import { LitElement, html, nothing } from 'lit'
+import { customElement, property, state, query} from 'lit/decorators.js'
+import { LitElement, html, nothing, css , hidden} from 'lit'
 import {Task} from "./task.type.ts";
-import "../cows/cows.ts"
+import "../cow-profile/profile.ts"
 
 @customElement('farm-tasks')
 export class FarmTasks extends LitElement {
-
+    static styles = css`
+ 
+    .content {
+    background: white;
+    max-width: 80%;
+    margin-left: 10%;
+    margin-top: 20%;
+    border-radius: 24px;
+    padding: 20px;
+}
+h1 {
+color: #367749
+}
+    `
 
 
     @property({attribute: false, type: String})
     error = ''
 
     @property({attribute: false, type: Array})
-    data: Task[]
+    data: Task[] = []
 
     @state()
     private visible = false
 
+    @state()
+    private idx = ''
+
     @property({attribute: false, type: Boolean})
     isLoading = false
+
+    @query('#profile')
+    private profile: HTMLElement
 
     private fetchData() {
         this.updateComplete.then(() => {
@@ -41,27 +60,58 @@ export class FarmTasks extends LitElement {
         })
     }
 
-    private redirectTo(e) {
-        this.visible = true
+    private openCowProfile(cowId: string) {
+        return (_e: MouseEvent) => {
+            this.idx = cowId
+            this.visible = !this.visible
+        }
     }
+
+    private closeCowProfile(cowId: string) {
+        return (_e: MouseEvent) => {
+            this.idx = cowId
+            this.visible = true
+        }
+    }
+
+
     firstUpdated() {
         this.fetchData()
     }
     render() {
 
-        let i = "55"
-        if (this.data!=undefined){
-            i = this.data[0].cow_id
-        }
-        console.log(this.data)
+        let rows= []
 
+        if (this.data.length > 0){
+            for (const task of this.data) {
+                let row = html`<tr @click=${this.openCowProfile(task.cow_id)}>
+                <td>${task.cow_id}</td>
+                <td>${task.text}</td>
+            </tr>`
+                rows.push(row)
+            }
+        }
+
+        let profile = this.visible ? html` <farm-cow-profile id="profile" cow="${this.idx}" visible="${this.visible}"></farm-cow-profile>` : nothing
 
         return html`
-            <farm-herd id="herd" visible="true"></farm-herd>
-            <h1>Tasks</h1>
-            <button @click=${this.redirectTo}>cow profile</button>
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+
             
-            
+            <div class="content">
+                <h1>Tasks</h1>
+                <table class="table table-hover">
+                    <thead>
+                    <td>Cow Id</td>
+                    <td>Task</td>
+                    </thead>
+                    <tbody>
+                    ${rows}
+                    </tbody>
+                </table>
+            </div>
+            <farm-cow-profile  id="profile" cow="${this.idx}" visible="${this.visible}"></farm-cow-profile>
         `}
 
 }
