@@ -33,10 +33,6 @@ type CustomTime struct {
 	time.Time
 }
 
-type TestModel struct {
-	Date CustomTime `json:"date"`
-}
-
 func (t CustomTime) MarshalJSON() ([]byte, error) {
 	date := t.Time.Format("2006-01-02")
 	date = fmt.Sprintf(`"%s"`, date)

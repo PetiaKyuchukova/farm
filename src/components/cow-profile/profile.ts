@@ -84,17 +84,19 @@ export class FarmCowProfile extends LitElement {
     onChangeFatherID(e) { this.data.farmerId = e.target.value }
     onChangeFatherBreed(e) { this.data.fatherBreed = e.target.value }
     onChangePregnancy(e) {
-        debugger
         if (e.target.checked){
             this.data.isPregnant = true
         }}
     onChangeNotPregnancy(e) {
         if (e.target.checked){
-            console.log('in if ')
-
          this.data.isPregnant = false
     } }
-    onChangeOvulation(e) { this.data.ovulation = e.target.value }
+    onChangeOvulation(e) {
+        console.log(e.target.value)
+        this.data.ovulation = e.target.value
+        console.log(this.data.ovulation)
+
+    }
 
 
     private saveCowProfile(e) {
@@ -193,16 +195,17 @@ margin-bottom: 20px;">
                         </div>
                         <div class="input-group input-group-sm mb-3">
                             <span class="input-group-text" id="inputGroup-sizing-sm">Is Pregnant</span>
-                            <input type="radio" class="btn-check" name="options-outlined" id="success-outlined" autocomplete="off" "${this.data.isPregnant ? hidden: ''}  @change="${this.onChangePregnancy}">
+                            <input type="radio" class="btn-check"
+                                    name="options-outlined" id="success-outlined" autocomplete="on"   @change="${this.onChangePregnancy}">
                             <label class="btn btn-outline-success" for="success-outlined">Pregnant</label>
 
-                            <input type="radio" class="btn-check" name="options-outlined" id="danger-outlined" autocomplete="off" "${!this.data.isPregnant ? 'on': ''}" @change="${this.onChangeNotPregnancy}">
+                            <input type="radio" class="btn-check" name="options-outlined" id="danger-outlined" autocomplete="off"  @change="${this.onChangeNotPregnancy}">
                             <label class="btn btn-outline-danger" for="danger-outlined">NOT Pregnant</label>
                         </div>
 
                         <div class="input-group input-group-sm mb-3">
                             <span class="input-group-text" id="inputGroup-sizing-sm">Last Ovulation</span>
-                            <input type="date" id="ovulation" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" value="${this.data.ovulation}">
+                            <input type="date" id="ovulation" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" value="${this.data.ovulation}" @change="${this.onChangeOvulation}">
                         </div>
                     </div>
                     <div style="    
