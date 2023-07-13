@@ -1,5 +1,5 @@
 import {customElement, property, query, state} from "lit/decorators.js";
-import {LitElement,html, nothing, PropertyValues} from "lit";
+import {LitElement, html, nothing, PropertyValues, hidden} from "lit";
 import {Cow, Insemination, Pregnancy} from "../cows/cow.type.ts";
 
 @customElement('farm-cow-profile')
@@ -77,18 +77,27 @@ export class FarmCowProfile extends LitElement {
             this.visibleB = false
     }
     onChangeColor(e) { this.data.colour = e.target.value }
-    onChangeBirthdate(e) { this.data.birthdate = e.target.value }
+    onChangeBirthdate(e) { this.data.birthdate = (e.target.value)}
     onChangeGender(e) { this.data.gender = e.target.value }
     onChangeBreed(e) { this.data.breed = e.target.value }
     onChangeMotherID(e) { this.data.motherId = e.target.value }
     onChangeFatherID(e) { this.data.farmerId = e.target.value }
     onChangeFatherBreed(e) { this.data.fatherBreed = e.target.value }
-    onChangePregnancy(e) { this.data.isPregnant = e.target.value }
+    onChangePregnancy(e) {
+        debugger
+        if (e.target.checked){
+            this.data.isPregnant = true
+        }}
+    onChangeNotPregnancy(e) {
+        if (e.target.checked){
+            console.log('in if ')
+
+         this.data.isPregnant = false
+    } }
     onChangeOvulation(e) { this.data.ovulation = e.target.value }
 
 
     private saveCowProfile(e) {
-
 
         fetch(`http://localhost:9030/upsert`, {
             method: 'PUT',
@@ -184,12 +193,11 @@ margin-bottom: 20px;">
                         </div>
                         <div class="input-group input-group-sm mb-3">
                             <span class="input-group-text" id="inputGroup-sizing-sm">Is Pregnant</span>
-                            <input type="radio" class="btn-check" name="options-outlined" id="success-outlined" autocomplete="off" >
+                            <input type="radio" class="btn-check" name="options-outlined" id="success-outlined" autocomplete="off" "${this.data.isPregnant ? hidden: ''}  @change="${this.onChangePregnancy}">
                             <label class="btn btn-outline-success" for="success-outlined">Pregnant</label>
 
-                            <input type="radio" class="btn-check" name="options-outlined" id="danger-outlined" autocomplete="off" checked>
+                            <input type="radio" class="btn-check" name="options-outlined" id="danger-outlined" autocomplete="off" "${!this.data.isPregnant ? 'on': ''}" @change="${this.onChangeNotPregnancy}">
                             <label class="btn btn-outline-danger" for="danger-outlined">NOT Pregnant</label>
-                            
                         </div>
 
                         <div class="input-group input-group-sm mb-3">

@@ -29,7 +29,7 @@ func makeNullTime(t time.Time) sql.NullTime {
 func (r *CowRepo) UpsertCow(ctx context.Context, cow domain.Cow) error {
 	err := r.querier.UpsertCow(ctx, db2.UpsertCowParams{
 		ID:          cow.ID,
-		Birthdate:   cow.Birthdate,
+		Birthdate:   cow.Birthdate.Time,
 		Gender:      makeNullString(cow.Gender),
 		Breed:       makeNullString(cow.Breed),
 		Colour:      makeNullString(cow.Colour),
@@ -37,7 +37,7 @@ func (r *CowRepo) UpsertCow(ctx context.Context, cow domain.Cow) error {
 		Fatherid:    makeNullString(cow.FarmerId),
 		Fatherbreed: makeNullString(cow.Breed),
 		Ispregnant:  makeNullBool(&cow.IsPregnant),
-		Ovulation:   makeNullTime(cow.Ovulation),
+		Ovulation:   makeNullTime(cow.Ovulation.Time),
 	})
 	return err
 }
@@ -55,7 +55,7 @@ func (r *CowRepo) GetAllCows(ctx context.Context) ([]domain.Cow, error) {
 	for _, row := range rows {
 		cows = append(cows, domain.Cow{
 			ID:            row.ID,
-			Birthdate:     row.Birthdate,
+			Birthdate:     domain.CustomTime{row.Birthdate},
 			Colour:        row.Colour.String,
 			Gender:        row.Gender.String,
 			Breed:         row.Breed.String,
@@ -63,7 +63,7 @@ func (r *CowRepo) GetAllCows(ctx context.Context) ([]domain.Cow, error) {
 			FarmerId:      row.Fatherid.String,
 			FatherBreed:   row.Fatherbreed.String,
 			IsPregnant:    row.Ispregnant.Bool,
-			Ovulation:     row.Ovulation.Time,
+			Ovulation:     domain.CustomTime{row.Ovulation.Time},
 			Pregnancies:   nil,
 			Inseminations: nil,
 		})
@@ -77,7 +77,7 @@ func (r *CowRepo) GetCowById(ctx context.Context, id string) (*domain.Cow, error
 	}
 	cow := domain.Cow{
 		ID:            row.ID,
-		Birthdate:     row.Birthdate,
+		Birthdate:     domain.CustomTime{row.Birthdate},
 		Colour:        row.Colour.String,
 		Gender:        row.Gender.String,
 		Breed:         row.Breed.String,
@@ -85,7 +85,7 @@ func (r *CowRepo) GetCowById(ctx context.Context, id string) (*domain.Cow, error
 		FarmerId:      row.Fatherid.String,
 		FatherBreed:   row.Fatherbreed.String,
 		IsPregnant:    row.Ispregnant.Bool,
-		Ovulation:     row.Ovulation.Time,
+		Ovulation:     domain.CustomTime{row.Ovulation.Time},
 		Inseminations: nil,
 		Pregnancies:   nil,
 	}

@@ -88,8 +88,8 @@ func (w *Worker) TaskWorker(ctx context.Context) {
 			})
 		}
 
-		if !cow.IsPregnant && cow.Inseminations[0].Date.Before(cow.Ovulation) && cow.Ovulation.Add(21*day) == today {
-			cow.Ovulation = today
+		if !cow.IsPregnant && cow.Inseminations[0].Date.Before(cow.Ovulation.Time) && cow.Ovulation.Add(21*day) == today {
+			cow.Ovulation.Time = today
 			//if the cow is not pregnant AND we did not make Artificial insemination on last ovulation AND today is 21 days after the last ovu - today is ovulation
 			//sent alarm: today is {cow number} ovulation day, will we make Artificial insemination? --> true or false (if user press true sent a put req that will update the LastFertilization)
 			w.taskUC.UpsertTask(ctx, domain.Task{
@@ -98,8 +98,8 @@ func (w *Worker) TaskWorker(ctx context.Context) {
 				Type:  domain.FertilizationType,
 				Text:  domain.FertilizationText,
 			})
-		} else if !cow.IsPregnant && cow.Inseminations[0].Date.After(cow.Ovulation) && cow.Ovulation.Add(21*day) == today {
-			cow.Ovulation = today
+		} else if !cow.IsPregnant && cow.Inseminations[0].Date.After(cow.Ovulation.Time) && cow.Ovulation.Add(21*day) == today {
+			cow.Ovulation.Time = today
 			//sent alarm: today is {cow number} ovulation day, we made Artificial insemination after last ovulation, is it really in ovulation? will we make Artificial insemination? --> true or false (if user press true sent a put req that will update the LastFertilization)
 			w.taskUC.UpsertTask(ctx, domain.Task{
 				CowID: cow.ID,

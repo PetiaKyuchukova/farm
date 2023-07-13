@@ -2,12 +2,14 @@ package domain
 
 import (
 	"context"
+	"fmt"
+	"strings"
 	"time"
 )
 
 type Cow struct {
 	ID            string         `json:"id"`
-	Birthdate     time.Time      `json:"birthdate"`
+	Birthdate     CustomTime     `json:"birthdate"`
 	Colour        string         `json:"colour"`
 	Gender        string         `json:"gender"`
 	Breed         string         `json:"breed"`
@@ -15,7 +17,7 @@ type Cow struct {
 	FarmerId      string         `json:"farmerId"`
 	FatherBreed   string         `json:"fatherBreed"`
 	IsPregnant    bool           `json:"isPregnant"`
-	Ovulation     time.Time      `json:"ovulation"`
+	Ovulation     CustomTime     `json:"ovulation"`
 	Pregnancies   []Pregnancy    `json:"pregnancies"`
 	Inseminations []Insemination `json:"inseminations"`
 }
@@ -25,4 +27,29 @@ type CowRepo interface {
 	DeleteCow(ctx context.Context, id string) error
 	GetAllCows(ctx context.Context) ([]Cow, error)
 	GetCowById(ctx context.Context, id string) (*Cow, error)
+}
+
+type CustomTime struct {
+	time.Time
+}
+
+type TestModel struct {
+	Date CustomTime `json:"date"`
+}
+
+func (t CustomTime) MarshalJSON() ([]byte, error) {
+	date := t.Time.Format("2006-01-02")
+	date = fmt.Sprintf(`"%s"`, date)
+	return []byte(date), nil
+}
+
+func (t *CustomTime) UnmarshalJSON(b []byte) (err error) {
+	s := strings.Trim(string(b), "\"")
+
+	date, err := time.Parse("2006-01-02", s)
+	if err != nil {
+		return err
+	}
+	t.Time = date
+	return
 }
