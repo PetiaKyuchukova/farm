@@ -1,4 +1,4 @@
-import {customElement, property,state} from "lit/decorators.js";
+import {customElement, property, query, state} from "lit/decorators.js";
 import {LitElement,html, nothing, PropertyValues} from "lit";
 import {Cow, Insemination, Pregnancy} from "../cows/cow.type.ts";
 
@@ -76,8 +76,20 @@ export class FarmCowProfile extends LitElement {
     private closeCowProfile(e) {
             this.visibleB = false
     }
+    onChangeColor(e) { this.data.colour = e.target.value }
+    onChangeBirthdate(e) { this.data.birthdate = e.target.value }
+    onChangeGender(e) { this.data.gender = e.target.value }
+    onChangeBreed(e) { this.data.breed = e.target.value }
+    onChangeMotherID(e) { this.data.motherId = e.target.value }
+    onChangeFatherID(e) { this.data.farmerId = e.target.value }
+    onChangeFatherBreed(e) { this.data.fatherBreed = e.target.value }
+    onChangePregnancy(e) { this.data.isPregnant = e.target.value }
+    onChangeOvulation(e) { this.data.ovulation = e.target.value }
+
 
     private saveCowProfile(e) {
+
+
         fetch(`http://localhost:9030/upsert`, {
             method: 'PUT',
             body: JSON.stringify(this.data)
@@ -144,40 +156,45 @@ margin-bottom: 20px;">
                         <h1 style=" color: #3f7c4b;">${this.data.id} Profile</h1>
                         <div class="input-group input-group-sm mb-3">
                             <span class="input-group-text" id="inputGroup-sizing-sm">Birthday</span>
-                            <input type="date" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
+                            <input type="date" id="birthday" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm"  value="${this.data.birthdate}" @change="${this.onChangeBirthdate}">
                         </div>
                         <div class="input-group input-group-sm mb-3">
                             <span class="input-group-text" id="inputGroup-sizing-sm">Gender</span>
-                            <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
+                            <input type="text" id="gender" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm"  value="${this.data.gender}" @change="${this.onChangeGender}">
                         </div>
                         <div class="input-group input-group-sm mb-3">
                             <span class="input-group-text" id="inputGroup-sizing-sm">Color</span>
-                            <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" value="${this.data.colour}" onchange="${this.data.colour = 'changed'}">
+                            <input type="text" id="color" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" value="${this.data.colour}" @change="${this.onChangeColor}">
                         </div>
                         <div class="input-group input-group-sm mb-3">
                             <span class="input-group-text" id="inputGroup-sizing-sm">Breed</span>
-                            <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
+                            <input type="text" id="breed" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm"  value="${this.data.breed}" @change="${this.onChangeBreed}">
                         </div>
                         <div class="input-group input-group-sm mb-3">
                             <span class="input-group-text" id="inputGroup-sizing-sm">Mother ID</span>
-                            <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
+                            <input type="text" id="motherId" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm"  value="${this.data.motherId}" @change="${this.onChangeMotherID}">
                         </div>
                         <div class="input-group input-group-sm mb-3">
                             <span class="input-group-text" id="inputGroup-sizing-sm">Father ID</span>
-                            <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
+                            <input type="text" id="fatherId" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm"  value="${this.data.farmerId}" @change="${this.onChangeFatherID}">
                         </div>
                         <div class="input-group input-group-sm mb-3">
                             <span class="input-group-text" id="inputGroup-sizing-sm">Father Breed</span>
-                            <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
+                            <input type="text" id="fatherBreed" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm"  value="${this.data.fatherBreed}" @change="${this.onChangeFatherBreed}">
                         </div>
                         <div class="input-group input-group-sm mb-3">
                             <span class="input-group-text" id="inputGroup-sizing-sm">Is Pregnant</span>
-                            <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" value="${this.data.isPregnant}">
+                            <input type="radio" class="btn-check" name="options-outlined" id="success-outlined" autocomplete="off" >
+                            <label class="btn btn-outline-success" for="success-outlined">Pregnant</label>
+
+                            <input type="radio" class="btn-check" name="options-outlined" id="danger-outlined" autocomplete="off" checked>
+                            <label class="btn btn-outline-danger" for="danger-outlined">NOT Pregnant</label>
+                            
                         </div>
 
                         <div class="input-group input-group-sm mb-3">
                             <span class="input-group-text" id="inputGroup-sizing-sm">Last Ovulation</span>
-                            <input type="date" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" value="${this.data.ovulation}">
+                            <input type="date" id="ovulation" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" value="${this.data.ovulation}">
                         </div>
                     </div>
                     <div style="    
