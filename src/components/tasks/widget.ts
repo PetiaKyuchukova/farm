@@ -79,7 +79,15 @@ color: #367749
         this.fetchData()
     }
     render() {
+        if (this.isLoading) {
+            return html`
+                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
 
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>`
+        }
         let rows= []
 
         if (this.data.length > 0){
@@ -92,14 +100,12 @@ color: #367749
             }
         }
 
-        let profile = this.visible ? html` <farm-cow-profile id="profile" cow="${this.idx}" visible="${this.visible}"></farm-cow-profile>` : nothing
-
         return html`
             <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
 
             
-            <div class="content">
+            <div class="content" style="${this.visible? 'filter: blur(8px);-webkit-filter: blur(8px);' : ''}">
                 <h1>Tasks</h1>
                 <table class="table table-hover">
                     <thead>
