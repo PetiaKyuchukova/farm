@@ -17,9 +17,9 @@ func NewPregnancyRepo(querier db2.Querier) *PregnancyRepo {
 func (r *PregnancyRepo) UpsertPregnancy(ctx context.Context, pregnancy domain.Pregnancy, cowId string) error {
 	err := r.querier.UpsertPregnancy(ctx, db2.UpsertPregnancyParams{
 		Cowid:      cowId,
-		Detectedat: pregnancy.DetectedAt,
-		Firstday:   makeNullTime(pregnancy.FirstDay),
-		Lastday:    makeNullTime(pregnancy.LastDay),
+		Detectedat: pregnancy.DetectedAt.Time,
+		Firstday:   makeNullTime(pregnancy.FirstDay.Time),
+		Lastday:    makeNullTime(pregnancy.LastDay.Time),
 	})
 	if err != nil {
 		return err
@@ -36,9 +36,9 @@ func (r *PregnancyRepo) GetPregnanciesByCowID(ctx context.Context, id string) ([
 	pregnancies := []domain.Pregnancy{}
 	for _, pregnancy := range pregnanciesRow {
 		pregnancies = append(pregnancies, domain.Pregnancy{
-			DetectedAt: pregnancy.Detectedat,
-			FirstDay:   pregnancy.Firstday.Time,
-			LastDay:    pregnancy.Lastday.Time,
+			DetectedAt: domain.CustomTime{pregnancy.Detectedat},
+			FirstDay:   domain.CustomTime{pregnancy.Firstday.Time},
+			LastDay:    domain.CustomTime{pregnancy.Lastday.Time},
 		})
 	}
 

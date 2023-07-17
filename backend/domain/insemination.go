@@ -2,13 +2,12 @@ package domain
 
 import (
 	"context"
-	"time"
 )
 
 type Insemination struct {
-	Date         time.Time `json:"date"`
-	Breed        string    `json:"breed"`
-	IsArtificial bool      `json:"IsArtificial"`
+	Date         CustomTime `json:"date"`
+	Breed        string     `json:"breed"`
+	IsArtificial bool       `json:"IsArtificial"`
 }
 
 type InseminationRepo interface {

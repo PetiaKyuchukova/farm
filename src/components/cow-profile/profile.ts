@@ -1,6 +1,9 @@
 import {customElement, property, query, state} from "lit/decorators.js";
-import {LitElement, html, nothing, PropertyValues, hidden} from "lit";
+import {LitElement, html, nothing,svg, PropertyValues, hidden} from "lit";
 import {Cow, Insemination, Pregnancy} from "../cows/cow.type.ts";
+import {unsafeHTML} from 'lit/directives/unsafe-html.js'
+
+import minus from '../../assets/minus-solid.svg'
 
 @customElement('farm-cow-profile')
 export class FarmCowProfile extends LitElement {
@@ -12,6 +15,18 @@ export class FarmCowProfile extends LitElement {
 
     @state()
     private visibleB = false
+
+    @state()
+    private visibleInseminations = false
+
+  @state()
+    private addingInseminations = false
+
+    @state()
+    private addingPregnancy = false
+
+    @state()
+    private visiblePregnancies = false
 
     @property({attribute: false, type: Object})
     data: Cow = {
@@ -76,6 +91,13 @@ export class FarmCowProfile extends LitElement {
     private closeCowProfile(e) {
             this.visibleB = false
     }
+    private pregnanciesVisibility(e) {
+        this.visiblePregnancies = !this.visiblePregnancies
+    }
+
+    private inseminationsVisibility(e) {
+        this.visibleInseminations = !this.visibleInseminations
+    }
     onChangeColor(e) { this.data.colour = e.target.value }
     onChangeBirthdate(e) { this.data.birthdate = (e.target.value)}
     onChangeGender(e) { this.data.gender = e.target.value }
@@ -127,6 +149,140 @@ export class FarmCowProfile extends LitElement {
        this.visibleB = true
     }
 
+    addInseminations(e){
+        this.addingInseminations = !this.addingInseminations
+        this.visibleInseminations = true
+    }
+
+    addPregnancy(e){
+        this.addingPregnancy = !this.addingPregnancy
+        this.visiblePregnancies = true
+    }
+
+    renderInseminations(){
+        let rows = []
+
+        for (const insemination of this.data.inseminations) {
+            let row = html`
+            <tr>
+                <td>${insemination.date}</td>
+                <td>${insemination.breed}</td>
+                <td>${insemination.IsArtificial}</td>
+            </tr>
+            `
+            rows.push(row)
+        }
+
+
+        let additionalRow = this.addingInseminations? html`
+            <tr style="opacity: ">
+                <td>
+                    <div class="input-group input-group-sm mb-3">
+                    <input type="date" id="insemination-date" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" >
+                    </div>
+                </td>
+                <td>
+                    <div class="input-group input-group-sm mb-3">
+                        <input type="text" id="insemination-breed" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" >
+                    </div>
+                </td>
+                <td>
+                    <div class="input-group input-group-sm mb-3">
+                        <input type="text" id="insemination-artf" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" >
+                    </div>
+                </td>
+            </tr>` : nothing
+
+        rows.push(additionalRow)
+
+
+        return html`
+            <table style="width: 100%">
+                <thead>
+                <tr>
+                    <th scope="col">Date</th>
+                    <th scope="col">Breed</th>
+                    <th scope="col">Is Artificial?</th>
+                </tr>
+                </thead>
+                ${rows}
+            </table>`
+
+
+    }
+
+    renderPregnancies(){
+        let rows = []
+
+        for (let i = 0; i < this.data.pregnancies.length; i++) {
+            if (i === this.data.pregnancies.length - 1){
+                console.log(this.data.pregnancies[i])
+                    let row = html`
+                        <tr>
+                            <td>
+                                <div class="input-group input-group-sm mb-3">
+                                    <input type="date" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" value="${this.data.pregnancies[i].detectedAt}">
+                                </div>
+                            </td>
+                            <td>
+                                <div class="input-group input-group-sm mb-3">
+                                    <input type="date" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" value="${this.data.pregnancies[i].firstDay}" >
+                                </div>
+                            </td>
+                            <td>
+                                <div class="input-group input-group-sm mb-3">
+                                    <input type="date"  class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" value="${this.data.pregnancies[i].lastDay}" >
+                                </div>
+                            </td>
+                        </tr>
+                `
+                rows.push(row)
+                console.log(row)
+                continue
+            }
+            let row = html`
+            <tr>
+                <td>${this.data.pregnancies[i].detectedAt}</td>
+                <td>${this.data.pregnancies[i].firstDay}</td>
+                <td>${this.data.pregnancies[i].lastDay}</td>
+            </tr>
+            `
+            rows.push(row)
+        }
+
+        let additionalRow = this.addingPregnancy? html`
+            <tr>
+                <td>
+                    <div class="input-group input-group-sm mb-3">
+                    <input type="date" id="insemination-date" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" >
+                    </div>
+                </td>
+                <td>
+                    <div class="input-group input-group-sm mb-3">
+                        <input type="date" id="insemination-breed" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" >
+                    </div>
+                </td>
+                <td>
+                    <div class="input-group input-group-sm mb-3">
+                        <input type="date" id="insemination-artf" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" >
+                    </div>
+                </td>
+            </tr>` : nothing
+
+        rows.push(additionalRow)
+
+        return html`<table style="width: 100%; ">
+            <thead>
+            <tr>
+                <th scope="col">Detected at</th>
+                <th scope="col">First Day</th>
+                <th scope="col">Last Day</th>
+            </tr>
+            </thead>
+            ${rows}
+        </table>`
+    }
+
 
 
     updated(changedProperties: PropertyValues) {
@@ -159,11 +315,7 @@ export class FarmCowProfile extends LitElement {
                 left: 15%;
                 padding: 20px;
                 border-radius: 10px;">
-                    <div style="    
-                    background: #ced08866;
-                    padding: 20px;
-                    border-radius: 10px;
-margin-bottom: 20px;">
+                    <div style="    background: #ced08866;padding: 20px; border-radius: 10px;margin-bottom: 20px;">
                         <h1 style=" color: #3f7c4b;">${this.data.id} Profile</h1>
                         <div class="input-group input-group-sm mb-3">
                             <span class="input-group-text" id="inputGroup-sizing-sm">Birthday</span>
@@ -200,7 +352,7 @@ margin-bottom: 20px;">
                             <label class="btn btn-outline-success" for="success-outlined">Pregnant</label>
 
                             <input type="radio" class="btn-check" name="options-outlined" id="danger-outlined" autocomplete="off"  @change="${this.onChangeNotPregnancy}">
-                            <label class="btn btn-outline-danger" for="danger-outlined">NOT Pregnant</label>
+                            <label class="btn btn-outline-danger" checked for="danger-outlined">NOT Pregnant</label>
                         </div>
 
                         <div class="input-group input-group-sm mb-3">
@@ -213,15 +365,29 @@ margin-bottom: 20px;">
                     padding: 20px;
                     border-radius: 10px;
 margin-bottom: 20px;">
-                        <h3>Inseminations</h3>
-                        
+                        <div style="display: flex;
+    justify-content: space-between;">  
+                            <h3 @click="${this.inseminationsVisibility}" style="cursor:pointer">Inseminations</h3>
+                            <i class="fa-solid fa-minus"></i>
+                            <button @click="${this.addInseminations}" type="button" class="btn btn-success">${this.addingInseminations ?  svg`<figure>${unsafeHTML(minus)}</figure>` : html`<i class="fa-solid fa-minus"></i>`} Add</button>
+                        </div>
+                       
+                        ${this.visibleInseminations ?
+                                this.renderInseminations()
+                                : nothing}
                     </div>
                     <div style="    
                     background: #ced08866;
                     padding: 20px;
                     border-radius: 10px;
 margin-bottom: 20px;">
-                        <h3>Pregnancies</h3>
+                        <div style="display: flex;justify-content: space-between;">
+                            <h3 @click="${this.pregnanciesVisibility}" style="cursor:pointer">Pregnancies</h3>
+                            <button @click="${this.addPregnancy}" type="button" class="btn btn-success">+ Add</button>
+                        </div>
+                        ${this.visiblePregnancies ? 
+                            this.renderPregnancies()
+                            :nothing}
                     </div>
                     <div>
                         <button @click="${this.closeCowProfile}">Cancel</button>

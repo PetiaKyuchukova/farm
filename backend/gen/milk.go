@@ -17,7 +17,7 @@ func NewMilkRepo(querier db2.Querier) *MIlkRepo {
 
 func (m *MIlkRepo) UpsertMIlk(ctx context.Context, milk domain.Milk) error {
 	err := m.querier.UpsertMilk(ctx, db2.UpsertMilkParams{
-		Date:   milk.Date,
+		Date:   milk.Date.Time,
 		Liters: makeNullFloat(&milk.Liters),
 		Price:  makeNullFloat(&milk.Price),
 	})
@@ -41,7 +41,7 @@ func (m *MIlkRepo) GetMilkInTimeframe(ctx context.Context, from, to time.Time) (
 
 	for _, row := range rows {
 		milkEntries = append(milkEntries, domain.Milk{
-			Date:   row.Date,
+			Date:   domain.CustomTime{row.Date},
 			Liters: row.Liters.Float64,
 			Price:  row.Price.Float64,
 		})

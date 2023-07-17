@@ -17,7 +17,7 @@ func NewInseminationRepo(querier db2.Querier) *InseminationRepo {
 func (r *InseminationRepo) UpsertInsemination(ctx context.Context, insemination domain.Insemination, cowId string) error {
 	err := r.querier.UpsertInsemination(ctx, db2.UpsertInseminationParams{
 		Cowid:        cowId,
-		Date:         insemination.Date,
+		Date:         insemination.Date.Time,
 		Breed:        makeNullString(insemination.Breed),
 		Isartificial: makeNullBool(&insemination.IsArtificial),
 	})
@@ -36,7 +36,7 @@ func (r *InseminationRepo) GetInseminationsByCowID(ctx context.Context, id strin
 	inseminations := []domain.Insemination{}
 	for _, insemination := range inseminationsRow {
 		inseminations = append(inseminations, domain.Insemination{
-			Date:         insemination.Date,
+			Date:         domain.CustomTime{insemination.Date},
 			Breed:        insemination.Breed.String,
 			IsArtificial: insemination.Isartificial.Bool,
 		})

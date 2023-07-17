@@ -6,7 +6,7 @@ import (
 )
 
 type Milk struct {
-	Date   time.Time
+	Date   CustomTime
 	Liters float64
 	Price  float64
 }

@@ -2,13 +2,12 @@ package domain
 
 import (
 	"context"
-	"time"
 )
 
 type Pregnancy struct {
-	DetectedAt time.Time `json:"detectedAt"`
-	FirstDay   time.Time `json:"firstDay"`
-	LastDay    time.Time `json:"lastDay"`
+	DetectedAt CustomTime `json:"detectedAt"`
+	FirstDay   CustomTime `json:"firstDay"`
+	LastDay    CustomTime `json:"lastDay"`
 }
 
 type PregnancyRepo interface {

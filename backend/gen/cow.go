@@ -96,7 +96,7 @@ func (r *CowRepo) GetCowById(ctx context.Context, id string) (*domain.Cow, error
 	}
 	for _, insemination := range inseminationsRow {
 		cow.Inseminations = append(cow.Inseminations, domain.Insemination{
-			Date:         insemination.Date,
+			Date:         domain.CustomTime{insemination.Date},
 			Breed:        insemination.Breed.String,
 			IsArtificial: insemination.Isartificial.Bool,
 		})
