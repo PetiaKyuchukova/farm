@@ -1,8 +1,12 @@
-body{
-  background: linear-gradient(270deg, #367749, #D9D68C);
-
+body, html {
+  background: url(https://img.atlasobscura.com/D2It7ft-b--puKuQiFyhxCIoLgD4-ANgi_HaAihxs8c/rt:fit/w:1280/q:81/sm:1/scp:1/ar:1/aHR0cHM6Ly9hdGxh/cy1kZXYuczMuYW1h/em9uYXdzLmNvbS91/cGxvYWRzL2Fzc2V0/cy84YTJmZjU1ZTEy/MWMyZGJjYTVfQ293/czEuanBn.jpg) no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
 }
 
 nav{
   background: white;
 }
+

@@ -4,6 +4,7 @@ import (
 	"context"
 	"farm/backend/domain"
 	"fmt"
+	"sort"
 )
 
 type CowsUC struct {
@@ -106,6 +107,10 @@ func (c *CowsUC) GetCowEntryById(ctx context.Context, id string) (*domain.Cow, e
 	if err != nil {
 		fmt.Errorf("err getting pregnancies: %w", err)
 	}
+
+	sort.Slice(pregnancies, func(aa, ab int) bool {
+		return pregnancies[aa].DetectedAt.Time.Before(pregnancies[ab].DetectedAt.Time)
+	})
 
 	insemination, err := c.inseminationRepo.GetInseminationsByCowID(ctx, id)
 	if err != nil {

@@ -20,6 +20,11 @@ func (t *CustomTime) UnmarshalJSON(b []byte) (err error) {
 	s := strings.Trim(string(b), "\"")
 
 	date, err := time.Parse("2006-01-02", s)
+
+	isZero := date.IsZero()
+	if isZero {
+		err = nil
+	}
 	if err != nil {
 		return err
 	}

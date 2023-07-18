@@ -88,6 +88,18 @@ color: #367749
                     <span class="visually-hidden">Loading...</span>
                 </div>`
         }
+
+        if (this.error !== ''){
+            return html`
+            <div style="    
+            background: white;
+            top: 50%;
+            left: 40%;
+            padding: 20px;
+            position: absolute;
+            border-radius: 10px;"> Ooops...something get wrong!</div>
+            `
+        }
         let rows= []
 
         if (this.data.length > 0){

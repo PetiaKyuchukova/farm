@@ -1,9 +1,7 @@
 import {customElement, property, query, state} from "lit/decorators.js";
-import {LitElement, html, nothing,svg, PropertyValues, hidden} from "lit";
+import {LitElement, html, nothing, PropertyValues} from "lit";
 import {Cow, Insemination, Pregnancy} from "../cows/cow.type.ts";
-import {unsafeHTML} from 'lit/directives/unsafe-html.js'
 
-import minus from '../../assets/minus-solid.svg'
 
 @customElement('farm-cow-profile')
 export class FarmCowProfile extends LitElement {
@@ -19,7 +17,7 @@ export class FarmCowProfile extends LitElement {
     @state()
     private visibleInseminations = false
 
-  @state()
+    @state()
     private addingInseminations = false
 
     @state()
@@ -44,20 +42,18 @@ export class FarmCowProfile extends LitElement {
         isPregnant: false
     }
 
-    @state()
-    emptyCow: Cow = {
-        id: "",
-        colour: "",
-        birthdate: new Date(),
-        gender: "",
+    @property({attribute: false, type: Object})
+    addedInsemination: Insemination = {
+        date: new Date(),
         breed: "",
-        ovulation: new Date(),
-        motherId: "",
-        farmerId: "",
-        fatherBreed: "",
-        inseminations: [],
-        pregnancies: [],
-        isPregnant: false
+        IsArtificial: false,
+    }
+
+    @property({attribute: false, type: Object})
+    addedPregnancy: Pregnancy = {
+        detectedAt: new Date('0001-01-01'),
+        firstDay: new Date('0001-01-01'),
+        lastDay: new Date('0001-01-01')
     }
 
     @property({attribute: false, type: Boolean})
@@ -65,7 +61,6 @@ export class FarmCowProfile extends LitElement {
 
     @property({attribute: false, type: String})
     error = ''
-
 
     private fetchData() {
         this.updateComplete.then(() => {
@@ -88,47 +83,71 @@ export class FarmCowProfile extends LitElement {
         })
     }
 
-    private closeCowProfile(e) {
+    private closeCowProfile() {
             this.visibleB = false
     }
-    private pregnanciesVisibility(e) {
+    private pregnanciesVisibility() {
         this.visiblePregnancies = !this.visiblePregnancies
+        this.addingPregnancy = false
     }
 
-    private inseminationsVisibility(e) {
+    private inseminationsVisibility() {
         this.visibleInseminations = !this.visibleInseminations
+        this.addingInseminations = false
     }
-    onChangeColor(e) { this.data.colour = e.target.value }
-    onChangeBirthdate(e) { this.data.birthdate = (e.target.value)}
-    onChangeGender(e) { this.data.gender = e.target.value }
-    onChangeBreed(e) { this.data.breed = e.target.value }
-    onChangeMotherID(e) { this.data.motherId = e.target.value }
-    onChangeFatherID(e) { this.data.farmerId = e.target.value }
-    onChangeFatherBreed(e) { this.data.fatherBreed = e.target.value }
-    onChangePregnancy(e) {
+
+
+    onChangeColor(e:any) { this.data.colour = e.target.value }
+    onChangeBirthdate(e:any) { this.data.birthdate = (e.target.value)}
+    onChangeGender(e:any) { this.data.gender = e.target.value }
+    onChangeBreed(e:any) { this.data.breed = e.target.value }
+    onChangeMotherID(e:any) { this.data.motherId = e.target.value }
+    onChangeFatherID(e:any) { this.data.farmerId = e.target.value }
+    onChangeFatherBreed(e:any) { this.data.fatherBreed = e.target.value }
+    onChangePregnancy(e:any) {
         if (e.target.checked){
             this.data.isPregnant = true
         }}
-    onChangeNotPregnancy(e) {
+    onChangeNotPregnancy(e:any) {
         if (e.target.checked){
          this.data.isPregnant = false
     } }
-    onChangeOvulation(e) {
-        console.log(e.target.value)
+    onChangeOvulation(e:any) {
         this.data.ovulation = e.target.value
-        console.log(this.data.ovulation)
-
+    }
+    onChangeLastPregnancyLastDay( idx: number){
+         return (e: any) => {
+             this.data.pregnancies[idx].lastDay = e.target.value
+         }
+    }
+    onChangeLastPregnancyFirstDay( idx: number){
+         return (e: any) => {
+             this.data.pregnancies[idx].firstDay = e.target.value
+         }
     }
 
+    onChangeAddedPregnancyDetection(e:any) { this.addedPregnancy.detectedAt = e.target.value }
+    onChangeAddedPregnancyFirstDay(e:any) { this.addedPregnancy.firstDay = e.target.value }
+    onChangeAddedPregnancyLastDay(e:any) { this.addedPregnancy.lastDay = e.target.value }
 
-    private saveCowProfile(e) {
+    onChangeAddedInseminationDate(e:any) { this.addedInsemination.date = e.target.value }
+    onChangeAddedInseminationBreed(e:any) { this.addedInsemination.breed = e.target.value }
+    onChangeAddedInseminationIsArtf(e:any) { this.addedInsemination.IsArtificial = e.target.value }
+
+
+    private saveCowProfile() {
+        if (this.addingPregnancy){
+            this.data.pregnancies.push(this.addedPregnancy)
+        }
+        if (this.addingInseminations){
+            this.data.inseminations.push(this.addedInsemination)
+        }
 
         fetch(`http://localhost:9030/upsert`, {
             method: 'PUT',
             body: JSON.stringify(this.data)
         }).then(async (response) => {
             if (response.ok) {
-                //const savedBudget = await response.json()
                 console.log("Saved!")
             } else {
                 this.error = 'Error saving cow.'
@@ -137,6 +156,16 @@ export class FarmCowProfile extends LitElement {
         })
 
         this.visibleB = false
+        this.addedPregnancy =  {
+            detectedAt: new Date('0001-01-01'),
+            firstDay: new Date('0001-01-01'),
+            lastDay: new Date('0001-01-01')
+        }
+        this.addedInsemination = {
+            date: new Date(0 ,0,0),
+            breed: "",
+            IsArtificial: false,
+        }
     }
 
     handleVisibility(){
@@ -149,12 +178,12 @@ export class FarmCowProfile extends LitElement {
        this.visibleB = true
     }
 
-    addInseminations(e){
+    addInseminations(){
         this.addingInseminations = !this.addingInseminations
         this.visibleInseminations = true
     }
 
-    addPregnancy(e){
+    addPregnancy(){
         this.addingPregnancy = !this.addingPregnancy
         this.visiblePregnancies = true
     }
@@ -178,17 +207,17 @@ export class FarmCowProfile extends LitElement {
             <tr style="opacity: ">
                 <td>
                     <div class="input-group input-group-sm mb-3">
-                    <input type="date" id="insemination-date" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" >
+                    <input type="date" id="insemination-date" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" @change="${this.onChangeAddedInseminationDate}" >
                     </div>
                 </td>
                 <td>
                     <div class="input-group input-group-sm mb-3">
-                        <input type="text" id="insemination-breed" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" >
+                        <input type="text" id="insemination-breed" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" @change="${this.onChangeAddedInseminationBreed}" >
                     </div>
                 </td>
                 <td>
                     <div class="input-group input-group-sm mb-3">
-                        <input type="text" id="insemination-artf" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" >
+                        <input type="text" id="insemination-artf" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" @change="${this.onChangeAddedInseminationIsArtf}">
                     </div>
                 </td>
             </tr>` : nothing
@@ -216,22 +245,19 @@ export class FarmCowProfile extends LitElement {
 
         for (let i = 0; i < this.data.pregnancies.length; i++) {
             if (i === this.data.pregnancies.length - 1){
-                console.log(this.data.pregnancies[i])
                     let row = html`
                         <tr>
                             <td>
+                                ${this.data.pregnancies[i].detectedAt}
+                            </td>
+                            <td>
                                 <div class="input-group input-group-sm mb-3">
-                                    <input type="date" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" value="${this.data.pregnancies[i].detectedAt}">
+                                    <input type="date" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" value="${this.data.pregnancies[i].firstDay}" @change="${this.onChangeLastPregnancyFirstDay(i)}">
                                 </div>
                             </td>
                             <td>
                                 <div class="input-group input-group-sm mb-3">
-                                    <input type="date" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" value="${this.data.pregnancies[i].firstDay}" >
-                                </div>
-                            </td>
-                            <td>
-                                <div class="input-group input-group-sm mb-3">
-                                    <input type="date"  class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" value="${this.data.pregnancies[i].lastDay}" >
+                                    <input type="date" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" value="${this.data.pregnancies[i].lastDay}" @change="${this.onChangeLastPregnancyLastDay(i)}" >
                                 </div>
                             </td>
                         </tr>
@@ -254,17 +280,17 @@ export class FarmCowProfile extends LitElement {
             <tr>
                 <td>
                     <div class="input-group input-group-sm mb-3">
-                    <input type="date" id="insemination-date" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" >
+                    <input type="date" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" @change="${this.onChangeAddedPregnancyDetection}">
                     </div>
                 </td>
                 <td>
                     <div class="input-group input-group-sm mb-3">
-                        <input type="date" id="insemination-breed" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" >
+                        <input type="date" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" @change="${this.onChangeAddedPregnancyFirstDay}" >
                     </div>
                 </td>
                 <td>
                     <div class="input-group input-group-sm mb-3">
-                        <input type="date" id="insemination-artf" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" >
+                        <input type="date" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" @change="${this.onChangeAddedPregnancyLastDay}">
                     </div>
                 </td>
             </tr>` : nothing
@@ -289,10 +315,13 @@ export class FarmCowProfile extends LitElement {
         const hasOrgChanged = changedProperties.has('visible')
         if (hasOrgChanged ) {
             this.handleVisibility()
+            this.visiblePregnancies = false
+            this.visibleInseminations = false
         }
     }
 
     render() {
+
         if (this.isLoading) {
             return html`
                 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
@@ -304,9 +333,13 @@ export class FarmCowProfile extends LitElement {
         }
         let profile = this.visibleB ?
             html`
-                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
-                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
-                
+                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+                      integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM"
+                      crossorigin="anonymous">
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+                        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+                        crossorigin="anonymous"></script>
+
                 <div class="content" style="    
                 background: #fff;
                 width: 69%;
@@ -319,45 +352,63 @@ export class FarmCowProfile extends LitElement {
                         <h1 style=" color: #3f7c4b;">${this.data.id} Profile</h1>
                         <div class="input-group input-group-sm mb-3">
                             <span class="input-group-text" id="inputGroup-sizing-sm">Birthday</span>
-                            <input type="date" id="birthday" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm"  value="${this.data.birthdate}" @change="${this.onChangeBirthdate}">
+                            <input type="date" id="birthday" class="form-control" aria-label="Sizing example input"
+                                   aria-describedby="inputGroup-sizing-sm" value="${this.data.birthdate}"
+                                   @change="${this.onChangeBirthdate}">
                         </div>
                         <div class="input-group input-group-sm mb-3">
                             <span class="input-group-text" id="inputGroup-sizing-sm">Gender</span>
-                            <input type="text" id="gender" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm"  value="${this.data.gender}" @change="${this.onChangeGender}">
+                            <input type="text" id="gender" class="form-control" aria-label="Sizing example input"
+                                   aria-describedby="inputGroup-sizing-sm" value="${this.data.gender}"
+                                   @change="${this.onChangeGender}">
                         </div>
                         <div class="input-group input-group-sm mb-3">
                             <span class="input-group-text" id="inputGroup-sizing-sm">Color</span>
-                            <input type="text" id="color" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" value="${this.data.colour}" @change="${this.onChangeColor}">
+                            <input type="text" id="color" class="form-control" aria-label="Sizing example input"
+                                   aria-describedby="inputGroup-sizing-sm" value="${this.data.colour}"
+                                   @change="${this.onChangeColor}">
                         </div>
                         <div class="input-group input-group-sm mb-3">
                             <span class="input-group-text" id="inputGroup-sizing-sm">Breed</span>
-                            <input type="text" id="breed" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm"  value="${this.data.breed}" @change="${this.onChangeBreed}">
+                            <input type="text" id="breed" class="form-control" aria-label="Sizing example input"
+                                   aria-describedby="inputGroup-sizing-sm" value="${this.data.breed}"
+                                   @change="${this.onChangeBreed}">
                         </div>
                         <div class="input-group input-group-sm mb-3">
                             <span class="input-group-text" id="inputGroup-sizing-sm">Mother ID</span>
-                            <input type="text" id="motherId" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm"  value="${this.data.motherId}" @change="${this.onChangeMotherID}">
+                            <input type="text" id="motherId" class="form-control" aria-label="Sizing example input"
+                                   aria-describedby="inputGroup-sizing-sm" value="${this.data.motherId}"
+                                   @change="${this.onChangeMotherID}">
                         </div>
                         <div class="input-group input-group-sm mb-3">
                             <span class="input-group-text" id="inputGroup-sizing-sm">Father ID</span>
-                            <input type="text" id="fatherId" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm"  value="${this.data.farmerId}" @change="${this.onChangeFatherID}">
+                            <input type="text" id="fatherId" class="form-control" aria-label="Sizing example input"
+                                   aria-describedby="inputGroup-sizing-sm" value="${this.data.farmerId}"
+                                   @change="${this.onChangeFatherID}">
                         </div>
                         <div class="input-group input-group-sm mb-3">
                             <span class="input-group-text" id="inputGroup-sizing-sm">Father Breed</span>
-                            <input type="text" id="fatherBreed" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm"  value="${this.data.fatherBreed}" @change="${this.onChangeFatherBreed}">
+                            <input type="text" id="fatherBreed" class="form-control" aria-label="Sizing example input"
+                                   aria-describedby="inputGroup-sizing-sm" value="${this.data.fatherBreed}"
+                                   @change="${this.onChangeFatherBreed}">
                         </div>
                         <div class="input-group input-group-sm mb-3">
                             <span class="input-group-text" id="inputGroup-sizing-sm">Is Pregnant</span>
                             <input type="radio" class="btn-check"
-                                    name="options-outlined" id="success-outlined" autocomplete="on"   @change="${this.onChangePregnancy}">
+                                   name="options-outlined" id="success-outlined" autocomplete="on"
+                                   @change="${this.onChangePregnancy}">
                             <label class="btn btn-outline-success" for="success-outlined">Pregnant</label>
 
-                            <input type="radio" class="btn-check" name="options-outlined" id="danger-outlined" autocomplete="off"  @change="${this.onChangeNotPregnancy}">
+                            <input type="radio" class="btn-check" name="options-outlined" id="danger-outlined"
+                                   autocomplete="off" @change="${this.onChangeNotPregnancy}">
                             <label class="btn btn-outline-danger" checked for="danger-outlined">NOT Pregnant</label>
                         </div>
 
                         <div class="input-group input-group-sm mb-3">
                             <span class="input-group-text" id="inputGroup-sizing-sm">Last Ovulation</span>
-                            <input type="date" id="ovulation" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" value="${this.data.ovulation}" @change="${this.onChangeOvulation}">
+                            <input type="date" id="ovulation" class="form-control" aria-label="Sizing example input"
+                                   aria-describedby="inputGroup-sizing-sm" value="${this.data.ovulation}"
+                                   @change="${this.onChangeOvulation}">
                         </div>
                     </div>
                     <div style="    
@@ -366,12 +417,13 @@ export class FarmCowProfile extends LitElement {
                     border-radius: 10px;
 margin-bottom: 20px;">
                         <div style="display: flex;
-    justify-content: space-between;">  
+    justify-content: space-between;">
                             <h3 @click="${this.inseminationsVisibility}" style="cursor:pointer">Inseminations</h3>
-                            <i class="fa-solid fa-minus"></i>
-                            <button @click="${this.addInseminations}" type="button" class="btn btn-success">${this.addingInseminations ?  svg`<figure>${unsafeHTML(minus)}</figure>` : html`<i class="fa-solid fa-minus"></i>`} Add</button>
+                            <button @click="${this.addInseminations}" type="button" class="btn btn-success">
+                                ${this.addingInseminations && this.visibleInseminations ? "-" : "+"}
+                            </button>
                         </div>
-                       
+
                         ${this.visibleInseminations ?
                                 this.renderInseminations()
                                 : nothing}
@@ -383,19 +435,21 @@ margin-bottom: 20px;">
 margin-bottom: 20px;">
                         <div style="display: flex;justify-content: space-between;">
                             <h3 @click="${this.pregnanciesVisibility}" style="cursor:pointer">Pregnancies</h3>
-                            <button @click="${this.addPregnancy}" type="button" class="btn btn-success">+ Add</button>
+                            <button @click="${this.addPregnancy}" type="button" class="btn btn-success">
+                                ${this.addingPregnancy && this.visiblePregnancies ? "-" : "+"}
+                            </button>
                         </div>
-                        ${this.visiblePregnancies ? 
-                            this.renderPregnancies()
-                            :nothing}
+                        ${this.visiblePregnancies ?
+                                this.renderPregnancies()
+                                : nothing}
                     </div>
                     <div>
                         <button @click="${this.closeCowProfile}">Cancel</button>
                         <button @click="${this.saveCowProfile}">Save</button>
                     </div>
                 </div>
-                
-             
+
+
             ` : nothing
 
         return profile
