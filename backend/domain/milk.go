@@ -6,9 +6,9 @@ import (
 )
 
 type Milk struct {
-	Date   CustomTime
-	Liters float64
-	Price  float64
+	Date   CustomTime `json:"date"`
+	Liters float64    `json:"liters"`
+	Price  float64    `json:"price"`
 }
 
 type MilkRepo interface {

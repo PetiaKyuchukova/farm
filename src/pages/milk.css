@@ -1,0 +1,12 @@
+body, html {
+    background: url(https://arc-anglerfish-washpost-prod-washpost.s3.amazonaws.com/public/VTVF53VAZUI6ZCX3C6ZWBE5B4U.jpg) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+nav{
+    background: white;
+}
+

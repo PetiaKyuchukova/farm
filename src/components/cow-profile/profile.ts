@@ -1,4 +1,4 @@
-import {customElement, property, query, state} from "lit/decorators.js";
+import {customElement, property, state} from "lit/decorators.js";
 import {LitElement, html, nothing, PropertyValues} from "lit";
 import {Cow, Insemination, Pregnancy} from "../cows/cow.type.ts";
 

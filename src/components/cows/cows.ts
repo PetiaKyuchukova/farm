@@ -1,9 +1,33 @@
 import { customElement, property} from 'lit/decorators.js'
-import { LitElement, html } from 'lit'
+import {LitElement, html, css} from 'lit'
 import {Cow} from "./cow.type.ts";
 
 @customElement('farm-herd')
 export class FarmHerd extends LitElement {
+    static styles = css`
+ 
+    .content {
+        background: white;
+        width: 80%;
+        position: absolute;
+        left: 10%;
+        top: 30%;
+        border-radius: 24px;
+        padding: 20px;
+    }
+    .search {
+        background: white;
+        width: 80%;
+        position: absolute;
+        left: 10%;
+        top: 20%;
+        border-radius: 24px;
+        padding: 20px;
+    }
+    h1 {
+        color: #367749
+    }
+    `
     @property({attribute: false, type: String})
     error = ''
 
@@ -11,8 +35,7 @@ export class FarmHerd extends LitElement {
     visible = false
 
     @property({attribute: false, type: Array})
-    data: Cow[]
-
+    data: Cow[] = []
 
     @property({attribute: false, type: Boolean})
     isLoading = false
@@ -38,32 +61,54 @@ export class FarmHerd extends LitElement {
         })
     }
 
-    private redirectTo(e) {
-        this.visible = false
-    }
-
 
     firstUpdated() {
         this.fetchData()
     }
 
     render() {
-        let i = "55"
+        let rows = []
         if (this.data!=undefined){
-            i = this.data[0].id
+            for (const cow of this.data) {
+                let row = html`
+                <tr>
+                    <td>${cow.id}</td>
+                    <td>${cow.gender}</td>
+                    <td>${cow.breed}</td>
+                    <td>${cow.colour}</td>
+                </tr>
+                `
+                rows.push(row)
+            }
         }
-        console.log("from cows.", this.data)
 
 
         return html`
-            <div ?hidden=${!this.visible}>
-
-                <h1>Hello</h1>
-                <button @click=${this.redirectTo}>close</button>
-                id: ${i}
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+            
+            <div class="search"> 
+                <h2>Search</h2>
+            </div>
+            <div class="content">
+                <div style="display: flex;     justify-content: space-between;">
+                    <h1>Herd</h1>
+                    <button type="button" style="    height: 40px;" class="btn btn-success">+ Add cow</button>
+                    
+                </div>
+                <table class="table table-hover">
+                    <thead>
+                        <td>Cow ID</td>
+                        <td>Gender</td>
+                        <td>Breed</td>
+                        <td>Color</td>
+                    </thead>
+                    <tbody>
+                        ${rows}
+                    </tbody>
+                </table>
             </div>
            
         `}
 }
 
-//data : ${this.data[0].Id},${this.data[0].Birthday},${this.data[0].Colour},${this.data[0].MotherId}

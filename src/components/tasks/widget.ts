@@ -1,5 +1,5 @@
 import { customElement, property, state, query} from 'lit/decorators.js'
-import { LitElement, html, nothing, css , hidden} from 'lit'
+import { LitElement, html, css } from 'lit'
 import {Task} from "./task.type.ts";
 import "../cow-profile/profile.ts"
 
@@ -15,9 +15,9 @@ export class FarmTasks extends LitElement {
     border-radius: 24px;
     padding: 20px;
 }
-h1 {
-color: #367749
-}
+    h1 {
+        color: #367749
+    }
     `
 
 
