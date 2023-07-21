@@ -37,7 +37,7 @@ export class FarmMilkList extends LitElement {
         this.updateComplete.then(() => {
             this.isLoading = true
 
-            fetch(`http://localhost:9030/milk?from=2023-04-04&to=2023-07-12`)
+            fetch(`http://localhost:9030/milk?from=2021-01-04&to=2023-07-12`)
                 .then(async resp => {
                     console.log(this.data)
                     if (resp.status === 200) {

@@ -1,4 +1,4 @@
-import { customElement, state,property} from 'lit/decorators.js'
+import { customElement, query,property} from 'lit/decorators.js'
 import {LitElement, html, css} from 'lit'
 import {Milk} from "../milk-list/milk.type.ts";
 
@@ -34,13 +34,18 @@ export class FarmMilkPost extends LitElement {
         price:0
     }
 
-    @state()
-    totalPrice = 0
+
+    @query("#totalPrice")
+    totalPrice: HTMLElement
+
+
 
     onChangeMilkDate(e:any) { this.data.date = (e.target.value)}
-    onChangeMilkLiters(e:any) { this.data.liters = (e.target.value)}
-    onChangeMilkPrice(e:any) { this.data.price = (e.target.value)
-    this.totalPrice = this.data.liters *this.data.price
+    onChangeMilkLiters(e:any) { this.data.liters = parseFloat(e.target.value)}
+    onChangeMilkPrice(e:any) { this.data.price = parseFloat(e.target.value)
+       let total = this.data.liters *this.data.price
+
+             this.totalPrice.setAttribute("value", total.toString())
     }
 
     private saveMilk() {
@@ -94,7 +99,7 @@ export class FarmMilkPost extends LitElement {
                 
                 <div class="input-group input-group-sm mb-3">
                     <span class="input-group-text" id="inputGroup-sizing-sm">Total price</span>
-                    <input type="number" id="color" class="form-control" aria-label="Sizing example input"
+                    <input type="number" id="totalPrice" class="form-control" aria-label="Sizing example input"
                            aria-describedby="inputGroup-sizing-sm" 
                            value="${this.totalPrice} lv"
                 </div>

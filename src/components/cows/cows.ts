@@ -1,5 +1,5 @@
-import { customElement, property,query,state} from 'lit/decorators.js'
-import {LitElement, html, css, TemplateResult, nothing} from 'lit'
+import { customElement, property,query} from 'lit/decorators.js'
+import {LitElement, html, css,} from 'lit'
 import {Cow} from "./cow.type.ts";
 
 @customElement('farm-herd')
@@ -46,9 +46,6 @@ export class FarmHerd extends LitElement {
     @query("#myTable")
     myTable: HTMLElement
 
-
-    @state()
-    up:any[] = []
 
     private fetchData() {
         this.updateComplete.then(() => {
@@ -132,7 +129,7 @@ export class FarmHerd extends LitElement {
             <div class="content">
                 <div style="display: flex;     justify-content: space-between;">
                     <h1>Herd</h1>
-                    <button type="button" style="    height: 40px;" class="btn btn-success">+ Add cow</button>
+                    <button type="button" style="height: 40px;" class="btn btn-success">+ Add cow</button>
                     
                 </div>
                 <table id="myTable" class="table table-hover">
