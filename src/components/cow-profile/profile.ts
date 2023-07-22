@@ -521,13 +521,22 @@ margin-bottom: 20px;">
                         <button class="btn btn-danger"  @click="${this.confirmDeletion}">Delete</button>
                     </div>
                     
-                    ${this.visibleDeletion ? html` <div style="width: 100px; background: red">
-                        Deletion of cow ${this.cow}.
-                        Are you sure?
+                    ${this.visibleDeletion ? html`
+                        <div style="   box-shadow: 1px 1px 20px 12px gray; top: 30%; left: 22%; width: 50%; position: absolute; background: #dc3545; height: 20vh;border-radius: 10px; padding: 20px;">
+                            <div style="background: white; border-radius: 10px; text-align: center;     height: 100%; padding: 20px">
+                                <h4 style="margin-bottom: 25px;">
+                                    Deletion of cow <strong>${this.cow}</strong>.<br>
+                                    Are you sure?
+                                </h4>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <button class="btn btn-outline-secondary" @click="${this.visibleDeletion = false}">Cancel</button>
+                                    <button class="btn btn-danger" @click="${this.deleteCow}">Delete</button>
+                                </div>
+                            </div>
+                            
 
-                        <button @click="${this.visibleDeletion = false}">Cancel</button>
-                        <button @click="${this.deleteCow}">Delete</button>
-                    </div>` : nothing}
+                            
+                        </div>` : nothing}
                    
                 </div>
             ` : nothing
