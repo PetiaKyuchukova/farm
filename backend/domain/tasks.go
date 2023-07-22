@@ -6,19 +6,19 @@ import (
 )
 
 const (
-	FertilizationType     = "artificial inseminated"
-	PregnantType          = "pregnancy check"
-	DryPeriodAfter15dType = "dry period - after 15 days"
-	DryPeriodStartType    = "dry period - start"
-	GivingBirthType       = "giving birth"
-	OvulationType         = "ovulation"
+	FertilizationType     = "AI"
+	PregnantType          = "PC"
+	DryPeriodAfter15dType = "DP15d"
+	DryPeriodStartType    = "DPS"
+	GivingBirthType       = "GB"
+	OvulationType         = "OVU"
 
-	OvulationAfterFertilizationText = "Today is expected ovulation day of the cow but we made Artificial insemination after last ovulation, is it really in ovulation? will we make Artificial insemination?"
-	FertilizationText               = "Today is ovulation day of tha cow and it is ready to be artificial inseminated. Did you inseminated it?"
-	PregnantText                    = "Today is time to check is the cow pregnant. Is it pregnant?"
-	DryPeriodAfter15dText           = "Left 15 days until the start of the dry period"
-	DryPeriodStartText              = "Today should start the dry period. 60 days left to expected giving birth date."
-	GivingBirthText                 = "Today we expect the cow is going to giving birth. Did the cow gave birth today?"
+	OvulationAfterFertilizationText = "Expected OVULATION day. ARTIFICIAL INSEMINATION after last ovulation"
+	FertilizationText               = "Expected OVULATION day"
+	PregnantText                    = "Check cow PREGNANCY"
+	DryPeriodAfter15dText           = "Left 15 days until start of the DRY PERIOD"
+	DryPeriodStartText              = "Start DRY PERIOD. 60 days left to expected giving birth date."
+	GivingBirthText                 = "Expect GIVING BIRTH"
 )
 
 type Task struct {

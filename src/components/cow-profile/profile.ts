@@ -82,9 +82,8 @@ export class FarmCowProfile extends LitElement {
                 })
         })
     }
-
     private closeCowProfile() {
-            this.visibleB = false
+        this.visibleB = false
         this.addedPregnancy =  {
             detectedAt: new Date('0001-01-01'),
             firstDay: new Date('0001-01-01'),
@@ -114,12 +113,10 @@ export class FarmCowProfile extends LitElement {
         this.visiblePregnancies = !this.visiblePregnancies
         this.addingPregnancy = false
     }
-
     private inseminationsVisibility() {
         this.visibleInseminations = !this.visibleInseminations
         this.addingInseminations = false
     }
-
 
     onChangeColor(e:any) { this.data.colour = e.target.value }
     onChangeID(e:any) { this.data.id = e.target.value }
@@ -178,17 +175,21 @@ export class FarmCowProfile extends LitElement {
             }
         })
 
-        this.visibleB = false
-        this.addedPregnancy =  {
-            detectedAt: new Date('0001-01-01'),
-            firstDay: new Date('0001-01-01'),
-            lastDay: new Date('0001-01-01')
-        }
-        this.addedInsemination = {
-            date: new Date(0 ,0,0),
-            breed: "",
-            IsArtificial: false,
-        }
+            this.visibleB = false
+            this.addedPregnancy =  {
+                detectedAt: new Date('0001-01-01'),
+                firstDay: new Date('0001-01-01'),
+                lastDay: new Date('0001-01-01')
+            }
+            this.addedInsemination = {
+                date: new Date(0 ,0,0),
+                breed: "",
+                IsArtificial: false,
+            }
+            window.location.reload();
+            return
+
+
     }
 
     handleVisibility(){
@@ -207,7 +208,6 @@ export class FarmCowProfile extends LitElement {
         this.addingInseminations = !this.addingInseminations
         this.visibleInseminations = true
     }
-
     addPregnancy(){
         this.addingPregnancy = !this.addingPregnancy
         this.visiblePregnancies = true
@@ -264,12 +264,11 @@ export class FarmCowProfile extends LitElement {
 
 
     }
-
     renderPregnancies(){
         let rows = []
 
         for (let i = 0; i < this.data.pregnancies.length; i++) {
-            if (i === this.data.pregnancies.length - 1){
+            if (i === this.data.pregnancies.length - 1 && this.data.isPregnant){
                     let row = html`
                         <tr>
                             <td>
@@ -334,11 +333,9 @@ export class FarmCowProfile extends LitElement {
         </table>`
     }
 
-
-
     updated(changedProperties: PropertyValues) {
-        const hasOrgChanged = changedProperties.has('visible')
-        if (hasOrgChanged ) {
+        const hasVisibleChanged = changedProperties.has('visible')
+        if (hasVisibleChanged) {
             this.handleVisibility()
             this.visiblePregnancies = false
             this.visibleInseminations = false
@@ -369,7 +366,7 @@ export class FarmCowProfile extends LitElement {
                 background: #fff;
                 width: 69%;
                 position: absolute;
-                top: 15%;
+                top: 8%;
                 left: 15%;
                 padding: 20px;
                 border-radius: 10px;">
@@ -486,8 +483,6 @@ margin-bottom: 20px;">
                         <button class="btn btn-success" @click="${this.saveCowProfile}">Save</button>
                     </div>
                 </div>
-
-
             ` : nothing
 
         return profile

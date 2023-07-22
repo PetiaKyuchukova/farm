@@ -9,9 +9,10 @@ export class FarmTasks extends LitElement {
  
     .content {
     background: white;
-    max-width: 80%;
-    margin-left: 10%;
-    margin-top: 20%;
+    width: 80%;
+    left: 10%;
+    top: 20%;
+    position: absolute;
     border-radius: 24px;
     padding: 20px;
 }
@@ -67,17 +68,42 @@ export class FarmTasks extends LitElement {
         }
     }
 
-    private closeCowProfile(cowId: string) {
-        return (_e: MouseEvent) => {
-            this.idx = cowId
-            this.visible = true
-        }
-    }
 
+    FertilizationType     = "AI"
+    PregnantType          = "PC"
+    DryPeriodAfter15dType = "DP15d"
+    DryPeriodStartType    = "DPS"
+    GivingBirthType       = "GB"
+    OvulationType         = "OVU"
+    PostMilkType         = "M"
+
+    warning = "table-warning"
+    success = "table-success"
+    danger = "table-danger"
+    info = "table-info"
+
+    mapTaksTypes = new Map();
+
+    fillMap(){
+       let  mapTypes = new Map();
+        mapTypes.set(this.FertilizationType, this.warning)
+        mapTypes.set(this.PregnantType, this.warning)
+
+        mapTypes.set(this.GivingBirthType, this.danger)
+        mapTypes.set(this.DryPeriodStartType, this.danger)
+
+        mapTypes.set(this.OvulationType, this.success)
+        mapTypes.set(this.DryPeriodAfter15dType, this.success)
+        mapTypes.set(this.PostMilkType, this.info)
+
+        return mapTypes
+    }
 
     firstUpdated() {
         this.fetchData()
+        this.mapTaksTypes = this.fillMap()
     }
+
     render() {
         if (this.isLoading) {
             return html`
@@ -88,6 +114,7 @@ export class FarmTasks extends LitElement {
                     <span class="visually-hidden">Loading...</span>
                 </div>`
         }
+
 
         if (this.error !== ''){
             return html`
@@ -104,10 +131,11 @@ export class FarmTasks extends LitElement {
 
         if (this.data.length > 0){
             for (const task of this.data) {
-                let row = html`<tr @click=${this.openCowProfile(task.cow_id)}>
-                <td>${task.cow_id}</td>
-                <td>${task.text}</td>
-            </tr>`
+                let row = html`
+                    <tr class="${this.mapTaksTypes.get(task.type)}" @click=${this.openCowProfile(task.cow_id)}>
+                        <td>${task.cow_id}</td>
+                        <td>${task.text}</td>
+                    </tr>`
                 rows.push(row)
             }
         }

@@ -145,7 +145,6 @@ export class FarmHerd extends LitElement {
                 <div style="display: flex;     justify-content: space-between;">
                     <h1>Herd</h1>
                     <button type="button" style="height: 40px;" class="btn btn-success" @click=${this.openCowProfile("new")}>+ Add cow</button>
-                    
                 </div>
                 <table id="myTable" class="table table-hover">
                     <thead>

@@ -1,6 +1,7 @@
-import { customElement, property} from 'lit/decorators.js'
+import { customElement, property, query} from 'lit/decorators.js'
 import {LitElement, html, css} from 'lit'
 import {Milk} from "./milk.type.ts";
+import '../milk-post/widget.ts'
 
 
 @customElement('farm-milk-list')
@@ -12,7 +13,7 @@ export class FarmMilkList extends LitElement {
         width: 80%;
         position: absolute;
         left: 10%;
-        top: 50%;
+        top: 20%;
         border-radius: 24px;
         padding: 20px;
     }
@@ -32,6 +33,9 @@ export class FarmMilkList extends LitElement {
 
     @property({attribute: false, type: Boolean})
     isLoading = false
+
+    @query("#postMilk")
+    postMilk: HTMLElement
 
     private fetchData() {
         this.updateComplete.then(() => {
@@ -57,6 +61,13 @@ export class FarmMilkList extends LitElement {
 
     firstUpdated() {
         this.fetchData()
+    }
+
+    private openPostForm() {
+        return (_e: MouseEvent) => {
+            this.visible = !this.visible
+            this.postMilk.setAttribute("visible", "up")
+        }
     }
 
    render(){
@@ -98,13 +109,17 @@ export class FarmMilkList extends LitElement {
            }
        }
 
+
        return html`
            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
 
 
            <div class="content">
-               <h1>Milk History</h1>
+               <div style="display: flex; justify-content: space-between;">
+                   <h1>Milk History</h1>
+                   <button type="button" style="height: 40px;" class="btn btn-success" @click=${this.openPostForm()}>+ Add Milk</button>
+               </div>
                <table class="table">
                    <thead>
                    <td>Date</td>
@@ -117,6 +132,8 @@ export class FarmMilkList extends LitElement {
                    </tbody>
                </table>
            </div>
+           
+           <farm-milk-post id="postMilk"></farm-milk-post>
        `
    }
 
