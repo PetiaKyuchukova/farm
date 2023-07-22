@@ -91,7 +91,7 @@ export class FarmMilkList extends LitElement {
                     <td>${milk.date}</td>
                     <td>${milk.liters}</td>
                     <td>${milk.price}</td>
-                    <td>${milk.liters * milk.price}</td>
+                    <td class="table-active" >${milk.liters * milk.price}</td>
                 </tr>
                 `
                rows.push(row)
@@ -110,7 +110,7 @@ export class FarmMilkList extends LitElement {
                    <td>Date</td>
                    <td>Liters</td>
                    <td>PRICE/liter</td>
-                   <td>Price</td>
+                   <td >Price</td>
                    </thead>
                    <tbody>
                    ${rows}

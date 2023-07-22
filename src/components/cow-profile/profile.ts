@@ -85,6 +85,30 @@ export class FarmCowProfile extends LitElement {
 
     private closeCowProfile() {
             this.visibleB = false
+        this.addedPregnancy =  {
+            detectedAt: new Date('0001-01-01'),
+            firstDay: new Date('0001-01-01'),
+            lastDay: new Date('0001-01-01')
+        }
+        this.addedInsemination = {
+            date: new Date(0 ,0,0),
+            breed: "",
+            IsArtificial: false,
+        }
+        this.data  = {
+            id: "",
+            colour: "",
+            birthdate: new Date(),
+            gender: "",
+            breed: "",
+            ovulation: new Date(),
+            motherId: "",
+            farmerId: "",
+            fatherBreed: "",
+            inseminations: [],
+            pregnancies: [],
+            isPregnant: false
+        }
     }
     private pregnanciesVisibility() {
         this.visiblePregnancies = !this.visiblePregnancies
@@ -98,6 +122,7 @@ export class FarmCowProfile extends LitElement {
 
 
     onChangeColor(e:any) { this.data.colour = e.target.value }
+    onChangeID(e:any) { this.data.id = e.target.value }
     onChangeBirthdate(e:any) { this.data.birthdate = (e.target.value)}
     onChangeGender(e:any) { this.data.gender = e.target.value }
     onChangeBreed(e:any) { this.data.breed = e.target.value }
@@ -125,11 +150,9 @@ export class FarmCowProfile extends LitElement {
              this.data.pregnancies[idx].firstDay = e.target.value
          }
     }
-
     onChangeAddedPregnancyDetection(e:any) { this.addedPregnancy.detectedAt = e.target.value }
     onChangeAddedPregnancyFirstDay(e:any) { this.addedPregnancy.firstDay = e.target.value }
     onChangeAddedPregnancyLastDay(e:any) { this.addedPregnancy.lastDay = e.target.value }
-
     onChangeAddedInseminationDate(e:any) { this.addedInsemination.date = e.target.value }
     onChangeAddedInseminationBreed(e:any) { this.addedInsemination.breed = e.target.value }
     onChangeAddedInseminationIsArtf(e:any) { this.addedInsemination.IsArtificial = e.target.value }
@@ -169,7 +192,9 @@ export class FarmCowProfile extends LitElement {
     }
 
     handleVisibility(){
-        this.fetchData()
+        if(this.cow != 'new'){
+            this.fetchData()
+        }
 
         if (this.cow ==  ''){
             this.visibleB = false
@@ -351,6 +376,12 @@ export class FarmCowProfile extends LitElement {
                     <div style="    background: #ced08866;padding: 20px; border-radius: 10px;margin-bottom: 20px;">
                         <h1 style=" color: #3f7c4b;">${this.data.id} Profile</h1>
                         <div class="input-group input-group-sm mb-3">
+                            <span class="input-group-text" id="inputGroup-sizing-sm">Id</span>
+                            <input type="text" id="cow" class="form-control" aria-label="Sizing example input"
+                                   aria-describedby="inputGroup-sizing-sm" value="${this.data.id}"
+                                   @change="${this.onChangeID}">
+                        </div>
+                        <div class="input-group input-group-sm mb-3">
                             <span class="input-group-text" id="inputGroup-sizing-sm">Birthday</span>
                             <input type="date" id="birthday" class="form-control" aria-label="Sizing example input"
                                    aria-describedby="inputGroup-sizing-sm" value="${this.data.birthdate}"
@@ -392,25 +423,30 @@ export class FarmCowProfile extends LitElement {
                                    aria-describedby="inputGroup-sizing-sm" value="${this.data.fatherBreed}"
                                    @change="${this.onChangeFatherBreed}">
                         </div>
-                        <div class="input-group input-group-sm mb-3">
-                            <span class="input-group-text" id="inputGroup-sizing-sm">Is Pregnant</span>
-                            <input type="radio" class="btn-check"
-                                   name="options-outlined" id="success-outlined" autocomplete="on"
-                                   @change="${this.onChangePregnancy}">
-                            <label class="btn btn-outline-success" for="success-outlined">Pregnant</label>
+                        ${this.data.gender == "male" ? nothing : 
+                                html`
+                                    <div class="input-group input-group-sm mb-3">
+                                        <span class="input-group-text" id="inputGroup-sizing-sm">Is Pregnant</span>
+                                        <input type="radio" class="btn-check"
+                                               name="options-outlined" id="success-outlined" autocomplete="on"
+                                               @change="${this.onChangePregnancy}">
+                                        <label class="btn btn-outline-success" for="success-outlined">Pregnant</label>
 
-                            <input type="radio" class="btn-check" name="options-outlined" id="danger-outlined"
-                                   autocomplete="off" @change="${this.onChangeNotPregnancy}">
-                            <label class="btn btn-outline-danger" checked for="danger-outlined">NOT Pregnant</label>
-                        </div>
+                                        <input type="radio" class="btn-check" name="options-outlined" id="danger-outlined"
+                                               autocomplete="off" @change="${this.onChangeNotPregnancy}">
+                                        <label class="btn btn-outline-danger" checked for="danger-outlined">NOT Pregnant</label>
+                                    </div>
 
-                        <div class="input-group input-group-sm mb-3">
-                            <span class="input-group-text" id="inputGroup-sizing-sm">Last Ovulation</span>
-                            <input type="date" id="ovulation" class="form-control" aria-label="Sizing example input"
-                                   aria-describedby="inputGroup-sizing-sm" value="${this.data.ovulation}"
-                                   @change="${this.onChangeOvulation}">
-                        </div>
+                                    <div class="input-group input-group-sm mb-3">
+                                        <span class="input-group-text" id="inputGroup-sizing-sm">Last Ovulation</span>
+                                        <input type="date" id="ovulation" class="form-control" aria-label="Sizing example input"
+                                               aria-describedby="inputGroup-sizing-sm" value="${this.data.ovulation}"
+                                               @change="${this.onChangeOvulation}">
+                                    </div>
+                                `}
+                        
                     </div>
+                    ${this.data.gender == "male" ? nothing : html`
                     <div style="    
                     background: #ced08866;
                     padding: 20px;
@@ -425,8 +461,8 @@ margin-bottom: 20px;">
                         </div>
 
                         ${this.visibleInseminations ?
-                                this.renderInseminations()
-                                : nothing}
+                            this.renderInseminations()
+                            : nothing}
                     </div>
                     <div style="    
                     background: #ced08866;
@@ -440,12 +476,14 @@ margin-bottom: 20px;">
                             </button>
                         </div>
                         ${this.visiblePregnancies ?
-                                this.renderPregnancies()
-                                : nothing}
+                            this.renderPregnancies()
+                            : nothing}
                     </div>
+                    `}
+                    
                     <div>
-                        <button @click="${this.closeCowProfile}">Cancel</button>
-                        <button @click="${this.saveCowProfile}">Save</button>
+                        <button class="btn btn-danger" @click="${this.closeCowProfile}">Cancel</button>
+                        <button class="btn btn-success" @click="${this.saveCowProfile}">Save</button>
                     </div>
                 </div>
 

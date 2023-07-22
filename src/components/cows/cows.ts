@@ -1,6 +1,7 @@
-import { customElement, property,query} from 'lit/decorators.js'
+import { customElement, property,query,state} from 'lit/decorators.js'
 import {LitElement, html, css,} from 'lit'
 import {Cow} from "./cow.type.ts";
+import "../cow-profile/profile.ts"
 
 @customElement('farm-herd')
 export class FarmHerd extends LitElement {
@@ -46,6 +47,9 @@ export class FarmHerd extends LitElement {
     @query("#myTable")
     myTable: HTMLElement
 
+    @state()
+    private idx = ''
+
 
     private fetchData() {
         this.updateComplete.then(() => {
@@ -69,12 +73,23 @@ export class FarmHerd extends LitElement {
 
     }
 
+    private openCowProfile(cowId: string) {
+        return (_e: MouseEvent) => {
+            if (cowId !== ""){
+                this.idx = cowId
+            }
+            console.log('click')
+            this.visible = !this.visible
+            console.log(this.visible)
+
+        }
+    }
 
     firstUpdated() {
         this.fetchData()
     }
 
-    private myFunction(e: any) {
+    private search(e: any) {
 
         var filter, table, tr, td, i,j, txtValue;
         filter = e.target.value.toUpperCase();
@@ -101,7 +116,7 @@ export class FarmHerd extends LitElement {
         if (this.data!=undefined){
             for (const cow of this.data) {
                 let row = html`
-                <tr>
+                <tr @click=${this.openCowProfile(cow.id)}>
                     <td>${cow.id}</td>
                     <td>${cow.gender}</td>
                     <td>${cow.breed}</td>
@@ -124,12 +139,12 @@ export class FarmHerd extends LitElement {
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
             
             <div class="search">
-                <input type="text" id="myInput" @keyup="${this.myFunction}" placeholder="Search for cows.." title="Type in a name">
+                <input type="text" id="myInput" @keyup="${this.search}" placeholder="Search for cows.." title="Type in a name">
             </div>
             <div class="content">
                 <div style="display: flex;     justify-content: space-between;">
                     <h1>Herd</h1>
-                    <button type="button" style="height: 40px;" class="btn btn-success">+ Add cow</button>
+                    <button type="button" style="height: 40px;" class="btn btn-success" @click=${this.openCowProfile("new")}>+ Add cow</button>
                     
                 </div>
                 <table id="myTable" class="table table-hover">
@@ -146,6 +161,9 @@ export class FarmHerd extends LitElement {
                     </tbody>
                 </table>
             </div>
+
+            <farm-cow-profile  id="profile" cow="${this.idx}" visible="${this.visible}"></farm-cow-profile>
+            
            
         `}
 }
