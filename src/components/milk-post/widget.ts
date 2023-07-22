@@ -9,13 +9,15 @@ export class FarmMilkPost extends LitElement {
     static styles = css`
  
 .content {
-        background: white;
-        width: 80%;
-        position: absolute;
-        left: 10%;
-        top: 20%;
-        border-radius: 24px;
-        padding: 20px;
+           background: white;
+    width: 50%;
+    width: ;
+    position: absolute;
+    left: 25%;
+    top: 30%;
+    border-radius: 24px;
+    padding: 20px;
+    box-shadow: 1px 1px 20px 12px gray;
     }
     h1 {
         color: #367749

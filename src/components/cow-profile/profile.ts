@@ -369,7 +369,8 @@ export class FarmCowProfile extends LitElement {
                 top: 8%;
                 left: 15%;
                 padding: 20px;
-                border-radius: 10px;">
+                border-radius: 10px;
+    box-shadow: 1px 1px 20px 12px gray;">
                     <div style="    background: #ced08866;padding: 20px; border-radius: 10px;margin-bottom: 20px;">
                         <h1 style=" color: #3f7c4b;">${this.data.id} Profile</h1>
                         <div class="input-group input-group-sm mb-3">
