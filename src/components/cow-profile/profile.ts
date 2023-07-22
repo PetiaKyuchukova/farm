@@ -15,6 +15,9 @@ export class FarmCowProfile extends LitElement {
     private visibleB = false
 
     @state()
+    private visibleDeletion = false
+
+    @state()
     private visibleInseminations = false
 
     @state()
@@ -162,7 +165,7 @@ export class FarmCowProfile extends LitElement {
         if (this.addingInseminations){
             this.data.inseminations.push(this.addedInsemination)
         }
-
+        console.log("save")
         fetch(`http://localhost:9030/upsert`, {
             method: 'PUT',
             body: JSON.stringify(this.data)
@@ -188,7 +191,40 @@ export class FarmCowProfile extends LitElement {
             }
             window.location.reload();
             return
+    }
 
+
+     deleteCow() {
+        console.log(this.cow)
+        fetch(`http://localhost:9030/delete/${this.cow}`, {
+            method: 'DELETE',
+        }).then(async (response) => {
+            if (response.ok) {
+                console.log("Deleted!")
+            } else {
+                this.error = 'Error deleting cow.'
+                console.log("err deleting cow!")
+            }
+        })
+
+         this.visibleB = false
+         this.addedPregnancy =  {
+             detectedAt: new Date('0001-01-01'),
+             firstDay: new Date('0001-01-01'),
+             lastDay: new Date('0001-01-01')
+         }
+         this.addedInsemination = {
+             date: new Date(0 ,0,0),
+             breed: "",
+             IsArtificial: false,
+         }
+         window.location.reload();
+         return
+    }
+
+    confirmDeletion() {
+        this.visibleDeletion = true
+        console.log(this.visibleDeletion )
 
     }
 
@@ -480,9 +516,19 @@ margin-bottom: 20px;">
                     `}
                     
                     <div>
-                        <button class="btn btn-danger" @click="${this.closeCowProfile}">Cancel</button>
+                        <button class="btn btn-outline-secondary" @click="${this.closeCowProfile}">Cancel</button>
                         <button class="btn btn-success" @click="${this.saveCowProfile}">Save</button>
+                        <button class="btn btn-danger"  @click="${this.confirmDeletion}">Delete</button>
                     </div>
+                    
+                    ${this.visibleDeletion ? html` <div style="width: 100px; background: red">
+                        Deletion of cow ${this.cow}.
+                        Are you sure?
+
+                        <button @click="${this.visibleDeletion = false}">Cancel</button>
+                        <button @click="${this.deleteCow}">Delete</button>
+                    </div>` : nothing}
+                   
                 </div>
             ` : nothing
 

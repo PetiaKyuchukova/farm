@@ -88,9 +88,7 @@ export class FarmHerd extends LitElement {
     firstUpdated() {
         this.fetchData()
     }
-
     private search(e: any) {
-
         var filter, table, tr, td, i,j, txtValue;
         filter = e.target.value.toUpperCase();
         table = this.myTable
@@ -111,18 +109,19 @@ export class FarmHerd extends LitElement {
             }
         }
     }
+
     private renderTable(){
         let rows = []
         if (this.data!=undefined){
             for (const cow of this.data) {
                 let row = html`
-                <tr @click=${this.openCowProfile(cow.id)}>
-                    <td>${cow.id}</td>
+                <tr>
+                    <td @click=${this.openCowProfile(cow.id)} >${cow.id}</td>
                     <td>${cow.gender}</td>
                     <td>${cow.breed}</td>
                     <td>${cow.colour}</td>
-                </tr>
-                `
+                </tr>`
+
                 rows.push(row)
             }
         }
@@ -153,6 +152,7 @@ export class FarmHerd extends LitElement {
                         <th>Gender</th>
                         <th>Breed</th>
                         <th>Color</th>
+                        <th></th>
                     </tr>
                     </thead>
                     <tbody>
