@@ -115,8 +115,8 @@ export class FarmHerd extends LitElement {
         if (this.data!=undefined){
             for (const cow of this.data) {
                 let row = html`
-                <tr>
-                    <td @click=${this.openCowProfile(cow.id)} >${cow.id}</td>
+                <tr style="cursor: pointer" @click=${this.openCowProfile(cow.id)}>
+                    <td  >${cow.id}</td>
                     <td>${cow.gender}</td>
                     <td>${cow.breed}</td>
                     <td>${cow.colour}</td>

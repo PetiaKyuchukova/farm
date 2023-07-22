@@ -93,6 +93,10 @@ export class FarmMilkPost extends LitElement {
         window.location.reload();
     }
 
+    cancelForm(){
+        this.visibleB = false
+    }
+
     render(){
         let form = this.visibleB ?
          html`
@@ -126,10 +130,12 @@ export class FarmMilkPost extends LitElement {
                     <span class="input-group-text" id="inputGroup-sizing-sm">Total price</span>
                     <input type="number" id="totalPrice" class="form-control" aria-label="Sizing example input"
                            aria-describedby="inputGroup-sizing-sm" 
-                           value="${this.totalPrice} lv"
+                           value="${this.totalPrice} lv">
                 </div>
-                <div>
-                    <button type="button" style="    height: 40px;" class="btn btn-success" @click="${this.saveMilk}">Save</button>
+                <div style="text-align: right;">
+                    <button type="button" style=" width: 100px;   height: 40px;" class="btn btn-outline-secondary" @click="${this.cancelForm}">Cancel</button>
+                    <button type="button" style="width: 100px;    height: 40px;" class="btn btn-success" @click="${this.saveMilk}">Save</button>
+                    
                 </div>
                 
             </div>

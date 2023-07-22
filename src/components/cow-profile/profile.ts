@@ -65,6 +65,18 @@ export class FarmCowProfile extends LitElement {
     @property({attribute: false, type: String})
     error = ''
 
+    getToday(){
+        const date = new Date();
+
+        let day = date.getDate();
+        let month = date.getMonth() + 1;
+        let year = date.getFullYear();
+
+        let currentDate = `${day}-${month}-${year}`;
+
+        return currentDate
+    }
+
     private fetchData() {
         this.updateComplete.then(() => {
             this.isLoading = true
@@ -85,6 +97,10 @@ export class FarmCowProfile extends LitElement {
                 })
         })
     }
+    closeDeletForm(){
+        this.visibleDeletion = false
+    }
+
     private closeCowProfile() {
         this.visibleB = false
         this.addedPregnancy =  {
@@ -489,7 +505,7 @@ margin-bottom: 20px;">
                         <div style="display: flex;
     justify-content: space-between;">
                             <h3 @click="${this.inseminationsVisibility}" style="cursor:pointer">Inseminations</h3>
-                            <button @click="${this.addInseminations}" type="button" class="btn btn-success">
+                            <button style="width: 45px" @click="${this.addInseminations}" type="button" class="btn btn-success">
                                 ${this.addingInseminations && this.visibleInseminations ? "-" : "+"}
                             </button>
                         </div>
@@ -505,7 +521,7 @@ margin-bottom: 20px;">
 margin-bottom: 20px;">
                         <div style="display: flex;justify-content: space-between;">
                             <h3 @click="${this.pregnanciesVisibility}" style="cursor:pointer">Pregnancies</h3>
-                            <button @click="${this.addPregnancy}" type="button" class="btn btn-success">
+                            <button style="width: 45px" @click="${this.addPregnancy}" type="button" class="btn btn-success">
                                 ${this.addingPregnancy && this.visiblePregnancies ? "-" : "+"}
                             </button>
                         </div>
@@ -515,10 +531,13 @@ margin-bottom: 20px;">
                     </div>
                     `}
                     
-                    <div>
-                        <button class="btn btn-outline-secondary" @click="${this.closeCowProfile}">Cancel</button>
-                        <button class="btn btn-success" @click="${this.saveCowProfile}">Save</button>
+                    <div style="    display: flex;
+    justify-content: space-between;">
                         <button class="btn btn-danger"  @click="${this.confirmDeletion}">Delete</button>
+                        <div>
+                            <button style="width: 100px ;" class="btn btn-outline-secondary" @click="${this.closeCowProfile}">Cancel</button>
+                            <button style="width: 100px ;" class="btn btn-success" @click="${this.saveCowProfile}">Save</button>
+                        </div>
                     </div>
                     
                     ${this.visibleDeletion ? html`
@@ -529,13 +548,10 @@ margin-bottom: 20px;">
                                     Are you sure?
                                 </h4>
                                 <div style="display: flex; justify-content: space-between;">
-                                    <button class="btn btn-outline-secondary" @click="${this.visibleDeletion = false}">Cancel</button>
+                                    <button class="btn btn-outline-secondary" @click="${this.closeDeletForm}">Cancel</button>
                                     <button class="btn btn-danger" @click="${this.deleteCow}">Delete</button>
                                 </div>
                             </div>
-                            
-
-                            
                         </div>` : nothing}
                    
                 </div>

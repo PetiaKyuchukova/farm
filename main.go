@@ -80,7 +80,7 @@ func main() {
 	worker.Schedule(ctx, "*/5 * * * *")
 
 	router := gin.Default()
-	router.LoadHTMLGlob("src/pages/*.gohtml")
+	router.LoadHTMLGlob("src/pages/*.html")
 
 	config := cors.DefaultConfig()
 	config.AllowOrigins = []string{"http://localhost:5173"}

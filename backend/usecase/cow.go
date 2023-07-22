@@ -117,6 +117,10 @@ func (c *CowsUC) GetCowEntryById(ctx context.Context, id string) (*domain.Cow, e
 		fmt.Errorf("err getting inseminations: %w", err)
 	}
 
+	sort.Slice(insemination, func(aa, ab int) bool {
+		return insemination[aa].Date.Time.Before(insemination[ab].Date.Time)
+	})
+
 	cow.Pregnancies = pregnancies
 	cow.Inseminations = insemination
 

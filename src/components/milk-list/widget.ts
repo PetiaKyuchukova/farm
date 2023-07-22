@@ -37,11 +37,24 @@ export class FarmMilkList extends LitElement {
     @query("#postMilk")
     postMilk: HTMLElement
 
+    totalProfit = 0
+
     private fetchData() {
+        const date = new Date();
+        const firstDayCurrentMonth = this.getFirstDayOfMonth(
+            date.getFullYear(),
+            date.getMonth(),
+        );
+
+        const lastDayCurrentMonth = this.getLastDayOfMonth(
+            date.getFullYear(),
+            date.getMonth(),
+        );
+
         this.updateComplete.then(() => {
             this.isLoading = true
 
-            fetch(`http://localhost:9030/milk?from=2021-01-04&to=2023-07-12`)
+            fetch(`http://localhost:9030/milk?from=${firstDayCurrentMonth}&to=${lastDayCurrentMonth}`)
                 .then(async resp => {
                     console.log(this.data)
                     if (resp.status === 200) {
@@ -56,6 +69,33 @@ export class FarmMilkList extends LitElement {
                     this.isLoading = false
                 })
         })
+    }
+     getFirstDayOfMonth(year: number, month:number) {
+         var d = new Date(year, month, 1),
+             monthN = '' + (d.getMonth() + 1),
+             dayN = '' + d.getDate(),
+             yearN = d.getFullYear();
+
+         if (monthN.length < 2)
+             monthN = '0' + monthN;
+         if (dayN.length < 2)
+             dayN = '0' + dayN;
+
+         return [yearN, monthN, dayN].join('-');
+    }
+
+     getLastDayOfMonth(year: number, month:number) {
+         var d = new Date(year, month + 1, 0),
+             monthN = '' + (d.getMonth() + 1),
+             dayN = '' + d.getDate(),
+             yearN = d.getFullYear();
+
+         if (monthN.length < 2)
+             monthN = '0' + monthN;
+         if (dayN.length < 2)
+             dayN = '0' + dayN;
+
+         return [yearN, monthN, dayN].join('-');
     }
 
 
@@ -97,6 +137,8 @@ export class FarmMilkList extends LitElement {
 
        if (this.data!=undefined){
            for (const milk of this.data) {
+               this.totalProfit += milk.liters * milk.price
+
                let row = html`
                 <tr>
                     <td>${milk.date}</td>
@@ -122,15 +164,19 @@ export class FarmMilkList extends LitElement {
                </div>
                <table class="table">
                    <thead>
-                   <td>Date</td>
-                   <td>Liters</td>
-                   <td>PRICE/liter</td>
-                   <td >Price</td>
+                   <th>Date</th>
+                   <th>Liters</th>
+                   <th>PRICE/liter</th>
+                   <th >Price</th>
                    </thead>
                    <tbody>
                    ${rows}
                    </tbody>
                </table>
+               <div style="text-align: right"> 
+                <h5>Total profit: </h5>
+                <p>${this.totalProfit} </p>
+               </div>
            </div>
            
            <farm-milk-post id="postMilk"></farm-milk-post>
