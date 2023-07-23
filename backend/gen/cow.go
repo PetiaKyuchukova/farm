@@ -34,6 +34,7 @@ func (r *CowRepo) UpsertCow(ctx context.Context, cow domain.Cow) error {
 		Breed:       makeNullString(cow.Breed),
 		Colour:      makeNullString(cow.Colour),
 		Motherid:    makeNullString(cow.MotherId),
+		Motherbreed: makeNullString(cow.MotherBreed),
 		Fatherid:    makeNullString(cow.FarmerId),
 		Fatherbreed: makeNullString(cow.Breed),
 		Ispregnant:  makeNullBool(&cow.IsPregnant),
@@ -60,6 +61,7 @@ func (r *CowRepo) GetAllCows(ctx context.Context) ([]domain.Cow, error) {
 			Gender:        row.Gender.String,
 			Breed:         row.Breed.String,
 			MotherId:      row.Motherid.String,
+			MotherBreed:   row.Motherbreed.String,
 			FarmerId:      row.Fatherid.String,
 			FatherBreed:   row.Fatherbreed.String,
 			IsPregnant:    row.Ispregnant.Bool,
@@ -82,24 +84,13 @@ func (r *CowRepo) GetCowById(ctx context.Context, id string) (*domain.Cow, error
 		Gender:        row.Gender.String,
 		Breed:         row.Breed.String,
 		MotherId:      row.Motherid.String,
+		MotherBreed:   row.Motherbreed.String,
 		FarmerId:      row.Fatherid.String,
 		FatherBreed:   row.Fatherbreed.String,
 		IsPregnant:    row.Ispregnant.Bool,
 		Ovulation:     domain.CustomTime{row.Ovulation.Time},
 		Inseminations: nil,
 		Pregnancies:   nil,
-	}
-
-	inseminationsRow, err := r.querier.GetInseminationsByCowId(ctx, id)
-	if err != nil {
-		return nil, err
-	}
-	for _, insemination := range inseminationsRow {
-		cow.Inseminations = append(cow.Inseminations, domain.Insemination{
-			Date:         domain.CustomTime{insemination.Date},
-			Breed:        insemination.Breed.String,
-			IsArtificial: insemination.Isartificial.Bool,
-		})
 	}
 
 	return &cow, err

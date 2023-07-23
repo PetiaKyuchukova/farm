@@ -121,7 +121,8 @@ export class FarmCowProfile extends LitElement {
             breed: "",
             ovulation: new Date(),
             motherId: "",
-            farmerId: "",
+            motherBreed: "",
+            fatherId: "",
             fatherBreed: "",
             inseminations: [],
             pregnancies: [],
@@ -143,7 +144,8 @@ export class FarmCowProfile extends LitElement {
     onChangeGender(e:any) { this.data.gender = e.target.value }
     onChangeBreed(e:any) { this.data.breed = e.target.value }
     onChangeMotherID(e:any) { this.data.motherId = e.target.value }
-    onChangeFatherID(e:any) { this.data.farmerId = e.target.value }
+    onChangeMotherBreed(e:any) { this.data.motherBreed = e.target.value }
+    onChangeFatherID(e:any) { this.data.fatherId = e.target.value }
     onChangeFatherBreed(e:any) { this.data.fatherBreed = e.target.value }
     onChangePregnancy(e:any) {
         if (e.target.checked){
@@ -462,9 +464,15 @@ export class FarmCowProfile extends LitElement {
                                    @change="${this.onChangeMotherID}">
                         </div>
                         <div class="input-group input-group-sm mb-3">
+                            <span class="input-group-text" id="inputGroup-sizing-sm">Mother Breed</span>
+                            <input type="text" id="motherId" class="form-control" aria-label="Sizing example input"
+                                   aria-describedby="inputGroup-sizing-sm" value="${this.data.motherBreed}"
+                                   @change="${this.onChangeMotherBreed}">
+                        </div>
+                        <div class="input-group input-group-sm mb-3">
                             <span class="input-group-text" id="inputGroup-sizing-sm">Father ID</span>
                             <input type="text" id="fatherId" class="form-control" aria-label="Sizing example input"
-                                   aria-describedby="inputGroup-sizing-sm" value="${this.data.farmerId}"
+                                   aria-describedby="inputGroup-sizing-sm" value="${this.data.fatherId}"
                                    @change="${this.onChangeFatherID}">
                         </div>
                         <div class="input-group input-group-sm mb-3">

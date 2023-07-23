@@ -5,7 +5,8 @@ export type Cow = {
     gender: string
     breed: string
     motherId: string
-    farmerId: string
+    motherBreed: string
+    fatherId: string
     fatherBreed: string
     isPregnant: boolean
     ovulation: Date

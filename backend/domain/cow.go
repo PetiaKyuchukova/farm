@@ -11,7 +11,8 @@ type Cow struct {
 	Gender        string         `json:"gender"`
 	Breed         string         `json:"breed"`
 	MotherId      string         `json:"motherId"`
-	FarmerId      string         `json:"farmerId"`
+	MotherBreed   string         `json:"motherBreed"`
+	FarmerId      string         `json:"fatherId"`
 	FatherBreed   string         `json:"fatherBreed"`
 	IsPregnant    bool           `json:"isPregnant"`
 	Ovulation     CustomTime     `json:"ovulation"`

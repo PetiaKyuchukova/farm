@@ -1,6 +1,6 @@
 
 -- name: UpsertCow :exec
-INSERT INTO cows (id, birthdate,gender, breed,colour,motherId,fatherId,fatherBreed,isPregnant,ovulation) VALUES (@id, @birthdate, @gender, @breed, @colour, @motherId, @fatherId, @fatherBreed, @isPregnant, @ovulation)
+INSERT INTO cows (id, birthdate,gender, breed,colour,motherId,motherBreed, fatherId,fatherBreed,isPregnant,ovulation) VALUES (@id, @birthdate, @gender, @breed, @colour, @motherId,@motherBreed, @fatherId, @fatherBreed, @isPregnant, @ovulation)
     ON CONFLICT(id)
     DO UPDATE SET
     id = @id,
@@ -9,6 +9,7 @@ INSERT INTO cows (id, birthdate,gender, breed,colour,motherId,fatherId,fatherBre
     breed = @breed,
     colour = @colour,
     motherId = @motherId,
+    motherBreed = @motherBreed,
     fatherId = @fatherId,
     fatherBreed = @fatherBreed,
     isPregnant = @isPregnant,

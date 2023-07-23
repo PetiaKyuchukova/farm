@@ -11,13 +11,15 @@ type CowsUC struct {
 	repo             domain.CowRepo
 	pregnancyRepo    domain.PregnancyRepo
 	inseminationRepo domain.InseminationRepo
+	taskRepo         domain.TaskRepo
 }
 
-func NewCowUC(repo domain.CowRepo, pregnancyRepo domain.PregnancyRepo, inseminationRepo domain.InseminationRepo) CowsUC {
+func NewCowUC(repo domain.CowRepo, pregnancyRepo domain.PregnancyRepo, inseminationRepo domain.InseminationRepo, taskRepo domain.TaskRepo) CowsUC {
 	return CowsUC{
 		repo:             repo,
 		pregnancyRepo:    pregnancyRepo,
 		inseminationRepo: inseminationRepo,
+		taskRepo:         taskRepo,
 	}
 }
 
@@ -48,13 +50,7 @@ func (c *CowsUC) UpsertCow(ctx context.Context, cow domain.Cow) error {
 }
 
 func (c *CowsUC) DeleteCowEntry(ctx context.Context, id string) error {
-	err := c.repo.DeleteCow(ctx, id)
-	if err != nil {
-		fmt.Errorf("error deleting cow: %w", err)
-		return err
-	}
-
-	err = c.pregnancyRepo.DeletePregnancies(ctx, id)
+	err := c.pregnancyRepo.DeletePregnancies(ctx, id)
 	if err != nil {
 		fmt.Errorf("error deleting pregnancies of cow: %w", err)
 		return err
@@ -62,7 +58,19 @@ func (c *CowsUC) DeleteCowEntry(ctx context.Context, id string) error {
 
 	err = c.inseminationRepo.DeleteInseminations(ctx, id)
 	if err != nil {
-		fmt.Errorf("error deleting inseminations of coe: %w", err)
+		fmt.Errorf("error deleting inseminations of cow: %w", err)
+		return err
+	}
+
+	err = c.taskRepo.DeleteTask(ctx, id)
+	if err != nil {
+		fmt.Errorf("error deleting tasks of cow: %w", err)
+		return err
+	}
+
+	err = c.repo.DeleteCow(ctx, id)
+	if err != nil {
+		fmt.Errorf("error deleting cow: %w", err)
 		return err
 	}
 

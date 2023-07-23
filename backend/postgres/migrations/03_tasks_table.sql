@@ -5,7 +5,10 @@ CREATE TABLE tasks
     date timestamp NOT NULL,
     type text NOT NULL,
     text text NOT NULL,
-    PRIMARY KEY (cowID,date)
+    done boolean,
+    PRIMARY KEY (cowID,date),
+    FOREIGN KEY (cowID) REFERENCES cows(id)
+
 );
 
 -- +goose Down

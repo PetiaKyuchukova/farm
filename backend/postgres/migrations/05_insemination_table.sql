@@ -5,7 +5,8 @@ CREATE TABLE inseminations
     date timestamp,
     breed text,
     isArtificial bool,
-    PRIMARY KEY (cowId, date)
+    PRIMARY KEY (cowId, date),
+    FOREIGN KEY (cowId) REFERENCES cows(id)
 );
 
 -- +goose Down

@@ -67,7 +67,7 @@ func main() {
 	pregnancyRepo := gen.NewPregnancyRepo(querier)
 
 	//use-cases
-	cowUc := usecase.NewCowUC(cowRepo, pregnancyRepo, inseminationRepo)
+	cowUc := usecase.NewCowUC(cowRepo, pregnancyRepo, inseminationRepo, taskRepo)
 	taskUC := usecase.NewTaskUC(taskRepo)
 	milkUC := usecase.NewMilkUC(milkRepo)
 

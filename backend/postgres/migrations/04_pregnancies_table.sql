@@ -5,7 +5,9 @@ CREATE TABLE pregnancies
     detectedAt timestamp,
     firstDay timestamp,
     lastDay timestamp,
-    PRIMARY KEY (cowId, detectedAt)
+    PRIMARY KEY (cowId, detectedAt),
+    FOREIGN KEY (cowId) REFERENCES cows(id)
+
 );
 
 -- +goose Down
