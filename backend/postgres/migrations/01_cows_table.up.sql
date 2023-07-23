@@ -2,7 +2,7 @@
 CREATE TABLE cows
 (
     id text NOT NULL,
-    birthdate timestamp NOT NULL,
+    birthdate timestamp,
     gender text,
     breed text,
     colour text,

@@ -1,4 +1,4 @@
-import {customElement, property, state} from "lit/decorators.js";
+import {customElement, property, state,query} from "lit/decorators.js";
 import {LitElement, html, nothing, PropertyValues} from "lit";
 import {Cow, Insemination, Pregnancy} from "../cows/cow.type.ts";
 
@@ -65,6 +65,12 @@ export class FarmCowProfile extends LitElement {
     @property({attribute: false, type: String})
     error = ''
 
+    @query("#radio1")
+    radio1 : RadioNodeList
+
+    @state()
+    pregnant = false
+
     getToday(){
         const date = new Date();
 
@@ -83,9 +89,10 @@ export class FarmCowProfile extends LitElement {
 
             fetch(`http://localhost:9030/cows/${this.cow}`)
                 .then(async resp => {
-                    console.log(this.data)
+
                     if (resp.status === 200) {
                         this.data = await resp.json()
+                        console.log(this.data)
                     } else {
                         this.error = 'Error loading cow.'
                     }
@@ -147,14 +154,22 @@ export class FarmCowProfile extends LitElement {
     onChangeMotherBreed(e:any) { this.data.motherBreed = e.target.value }
     onChangeFatherID(e:any) { this.data.fatherId = e.target.value }
     onChangeFatherBreed(e:any) { this.data.fatherBreed = e.target.value }
-    onChangePregnancy(e:any) {
-        if (e.target.checked){
+    onChangePregnancy(e: any) {
+
             this.data.isPregnant = true
-        }}
-    onChangeNotPregnancy(e:any) {
-        if (e.target.checked){
-         this.data.isPregnant = false
-    } }
+            this.pregnant = true
+        
+    }
+    onChangeNotPregnancy(e: any) {
+        console.log(this.pregnant)
+
+            console.log(this.pregnant)
+            this.data.isPregnant = false
+            this.pregnant = false
+            console.log(this.pregnant)
+
+
+     }
     onChangeOvulation(e:any) {
         this.data.ovulation = e.target.value
     }
@@ -213,7 +228,6 @@ export class FarmCowProfile extends LitElement {
 
 
      deleteCow() {
-        console.log(this.cow)
         fetch(`http://localhost:9030/delete/${this.cow}`, {
             method: 'DELETE',
         }).then(async (response) => {
@@ -341,7 +355,6 @@ export class FarmCowProfile extends LitElement {
                         </tr>
                 `
                 rows.push(row)
-                console.log(row)
                 continue
             }
             let row = html`
@@ -407,6 +420,9 @@ export class FarmCowProfile extends LitElement {
                     <span class="visually-hidden">Loading...</span>
                 </div>`
         }
+
+        this.pregnant = this.data.isPregnant
+
         let profile = this.visibleB ?
             html`
                 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -441,9 +457,8 @@ export class FarmCowProfile extends LitElement {
                         </div>
                         <div class="input-group input-group-sm mb-3">
                             <span class="input-group-text" id="inputGroup-sizing-sm">Gender</span>
-                            <input type="text" id="gender" class="form-control" aria-label="Sizing example input"
-                                   aria-describedby="inputGroup-sizing-sm" value="${this.data.gender}"
-                                   @change="${this.onChangeGender}">
+                            <input type = "radio" name = "radio" value = "male" id = "radio1" > Male</input>
+                            <input type = "radio" name = "radio" value = "female" id = "radio2" > Female</input>
                         </div>
                         <div class="input-group input-group-sm mb-3">
                             <span class="input-group-text" id="inputGroup-sizing-sm">Color</span>
@@ -458,96 +473,97 @@ export class FarmCowProfile extends LitElement {
                                    @change="${this.onChangeBreed}">
                         </div>
                         <div class="input-group input-group-sm mb-3">
-                            <span class="input-group-text" id="inputGroup-sizing-sm">Mother ID</span>
+                            <span style="    color: hotpink;" class="input-group-text" id="inputGroup-sizing-sm">Mother ID</span>
                             <input type="text" id="motherId" class="form-control" aria-label="Sizing example input"
                                    aria-describedby="inputGroup-sizing-sm" value="${this.data.motherId}"
                                    @change="${this.onChangeMotherID}">
                         </div>
                         <div class="input-group input-group-sm mb-3">
-                            <span class="input-group-text" id="inputGroup-sizing-sm">Mother Breed</span>
+                            <span style="    color: hotpink;" class="input-group-text" id="inputGroup-sizing-sm">Mother Breed</span>
                             <input type="text" id="motherId" class="form-control" aria-label="Sizing example input"
                                    aria-describedby="inputGroup-sizing-sm" value="${this.data.motherBreed}"
                                    @change="${this.onChangeMotherBreed}">
                         </div>
                         <div class="input-group input-group-sm mb-3">
-                            <span class="input-group-text" id="inputGroup-sizing-sm">Father ID</span>
+                            <span style="    color: cornflowerblue;" class="input-group-text" id="inputGroup-sizing-sm">Father ID</span>
                             <input type="text" id="fatherId" class="form-control" aria-label="Sizing example input"
                                    aria-describedby="inputGroup-sizing-sm" value="${this.data.fatherId}"
                                    @change="${this.onChangeFatherID}">
                         </div>
                         <div class="input-group input-group-sm mb-3">
-                            <span class="input-group-text" id="inputGroup-sizing-sm">Father Breed</span>
+                            <span style="    color: cornflowerblue;" class="input-group-text" id="inputGroup-sizing-sm">Father Breed</span>
                             <input type="text" id="fatherBreed" class="form-control" aria-label="Sizing example input"
                                    aria-describedby="inputGroup-sizing-sm" value="${this.data.fatherBreed}"
                                    @change="${this.onChangeFatherBreed}">
                         </div>
-                        ${this.data.gender == "male" ? nothing : 
+                        ${this.data.gender == "male" ? nothing :
                                 html`
                                     <div class="input-group input-group-sm mb-3">
                                         <span class="input-group-text" id="inputGroup-sizing-sm">Is Pregnant</span>
-                                        <input type="radio" class="btn-check"
-                                               name="options-outlined" id="success-outlined" autocomplete="on"
-                                               @change="${this.onChangePregnancy}">
-                                        <label class="btn btn-outline-success" for="success-outlined">Pregnant</label>
-
-                                        <input type="radio" class="btn-check" name="options-outlined" id="danger-outlined"
-                                               autocomplete="off" @change="${this.onChangeNotPregnancy}">
-                                        <label class="btn btn-outline-danger" checked for="danger-outlined">NOT Pregnant</label>
+                                        <button @click="${this.onChangePregnancy}" style="color: green; opacity: ${this.pregnant? 1: 0.5}">Pregnant</button>
+                                        <button @click="${this.onChangeNotPregnancy}" style="color: red; opacity: ${!this.pregnant? 1: 0.5}">NOT Pregnant</button>
                                     </div>
 
                                     <div class="input-group input-group-sm mb-3">
                                         <span class="input-group-text" id="inputGroup-sizing-sm">Last Ovulation</span>
-                                        <input type="date" id="ovulation" class="form-control" aria-label="Sizing example input"
+                                        <input type="date" id="ovulation" class="form-control"
+                                               aria-label="Sizing example input"
                                                aria-describedby="inputGroup-sizing-sm" value="${this.data.ovulation}"
                                                @change="${this.onChangeOvulation}">
                                     </div>
                                 `}
-                        
+
                     </div>
                     ${this.data.gender == "male" ? nothing : html`
-                    <div style="    
+                        <div style="    
                     background: #ced08866;
                     padding: 20px;
                     border-radius: 10px;
 margin-bottom: 20px;">
-                        <div style="display: flex;
+                            <div style="display: flex;
     justify-content: space-between;">
-                            <h3 @click="${this.inseminationsVisibility}" style="cursor:pointer">Inseminations</h3>
-                            <button style="width: 45px" @click="${this.addInseminations}" type="button" class="btn btn-success">
-                                ${this.addingInseminations && this.visibleInseminations ? "-" : "+"}
-                            </button>
-                        </div>
+                                <h3 @click="${this.inseminationsVisibility}" style="cursor:pointer">Inseminations</h3>
+                                <button style="width: 45px" @click="${this.addInseminations}" type="button"
+                                        class="btn btn-success">
+                                    ${this.addingInseminations && this.visibleInseminations ? "-" : "+"}
+                                </button>
+                            </div>
 
-                        ${this.visibleInseminations ?
-                            this.renderInseminations()
-                            : nothing}
-                    </div>
-                    <div style="    
+                            ${this.visibleInseminations ?
+                                    this.renderInseminations()
+                                    : nothing}
+                        </div>
+                        <div style="    
                     background: #ced08866;
                     padding: 20px;
                     border-radius: 10px;
 margin-bottom: 20px;">
-                        <div style="display: flex;justify-content: space-between;">
-                            <h3 @click="${this.pregnanciesVisibility}" style="cursor:pointer">Pregnancies</h3>
-                            <button style="width: 45px" @click="${this.addPregnancy}" type="button" class="btn btn-success">
-                                ${this.addingPregnancy && this.visiblePregnancies ? "-" : "+"}
-                            </button>
+                            <div style="display: flex;justify-content: space-between;">
+                                <h3 @click="${this.pregnanciesVisibility}" style="cursor:pointer">Pregnancies</h3>
+                                <button style="width: 45px" @click="${this.addPregnancy}" type="button"
+                                        class="btn btn-success">
+                                    ${this.addingPregnancy && this.visiblePregnancies ? "-" : "+"}
+                                </button>
+                            </div>
+                            ${this.visiblePregnancies ?
+                                    this.renderPregnancies()
+                                    : nothing}
                         </div>
-                        ${this.visiblePregnancies ?
-                            this.renderPregnancies()
-                            : nothing}
-                    </div>
                     `}
-                    
+
                     <div style="    display: flex;
     justify-content: space-between;">
-                        <button class="btn btn-danger"  @click="${this.confirmDeletion}">Delete</button>
+                        <button class="btn btn-danger" @click="${this.confirmDeletion}">Delete</button>
                         <div>
-                            <button style="width: 100px ;" class="btn btn-outline-secondary" @click="${this.closeCowProfile}">Cancel</button>
-                            <button style="width: 100px ;" class="btn btn-success" @click="${this.saveCowProfile}">Save</button>
+                            <button style="width: 100px ;" class="btn btn-outline-secondary"
+                                    @click="${this.closeCowProfile}">Cancel
+                            </button>
+                            <button style="width: 100px ;" class="btn btn-success" @click="${this.saveCowProfile}">
+                                Save
+                            </button>
                         </div>
                     </div>
-                    
+
                     ${this.visibleDeletion ? html`
                         <div style="   box-shadow: 1px 1px 20px 12px gray; top: 30%; left: 22%; width: 50%; position: absolute; background: #dc3545; height: 20vh;border-radius: 10px; padding: 20px;">
                             <div style="background: white; border-radius: 10px; text-align: center;     height: 100%; padding: 20px">
@@ -556,12 +572,13 @@ margin-bottom: 20px;">
                                     Are you sure?
                                 </h4>
                                 <div style="display: flex; justify-content: space-between;">
-                                    <button class="btn btn-outline-secondary" @click="${this.closeDeletForm}">Cancel</button>
+                                    <button class="btn btn-outline-secondary" @click="${this.closeDeletForm}">Cancel
+                                    </button>
                                     <button class="btn btn-danger" @click="${this.deleteCow}">Delete</button>
                                 </div>
                             </div>
                         </div>` : nothing}
-                   
+
                 </div>
             ` : nothing
 
