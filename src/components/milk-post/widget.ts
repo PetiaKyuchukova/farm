@@ -97,7 +97,7 @@ export class FarmMilkPost extends LitElement {
     cancelForm(){
         this.visibleB = false
         window.location.reload();
-        
+
     }
 
     render(){
