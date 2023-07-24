@@ -95,6 +95,7 @@ func main() {
 	router.GET("/cows/:id", cowHandler.GetCowById)
 
 	router.GET("/tasks", taskHandler.GetTasksByDate)
+	router.PUT("/tasks/update", taskHandler.UpdateTask)
 
 	router.PUT("/milk", milkHandler.UpsertMilk)
 	router.GET("/milk", milkHandler.FetchMilkSeriesInTimeframe)

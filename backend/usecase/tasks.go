@@ -14,8 +14,16 @@ func NewTaskUC(repo domain.TaskRepo) TaskUC {
 	return TaskUC{repo: repo}
 }
 
-func (c *TaskUC) UpsertTask(ctx context.Context, notification domain.Task) error {
-	return c.repo.UpsertTask(ctx, notification)
+func (c *TaskUC) UpsertTask(ctx context.Context, task domain.Task) error {
+	return c.repo.UpsertTask(ctx, task)
+}
+
+func (c *TaskUC) UpdateTaskStatus(ctx context.Context, task domain.Task) error {
+	err := c.repo.UpdateTaskStatus(ctx, task.CowID, task.Date.Time, task.Done)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (c *TaskUC) DeleteTask(ctx context.Context, id string) error {

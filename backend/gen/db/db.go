@@ -54,11 +54,11 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.getPregnanciesByCowIdStmt, err = db.PrepareContext(ctx, getPregnanciesByCowId); err != nil {
 		return nil, fmt.Errorf("error preparing query GetPregnanciesByCowId: %w", err)
 	}
-	if q.getTaskByCowIdStmt, err = db.PrepareContext(ctx, getTaskByCowId); err != nil {
-		return nil, fmt.Errorf("error preparing query GetTaskByCowId: %w", err)
-	}
 	if q.getTasksByDateStmt, err = db.PrepareContext(ctx, getTasksByDate); err != nil {
 		return nil, fmt.Errorf("error preparing query GetTasksByDate: %w", err)
+	}
+	if q.updateTaskStatusStmt, err = db.PrepareContext(ctx, updateTaskStatus); err != nil {
+		return nil, fmt.Errorf("error preparing query UpdateTaskStatus: %w", err)
 	}
 	if q.upsertCowStmt, err = db.PrepareContext(ctx, upsertCow); err != nil {
 		return nil, fmt.Errorf("error preparing query UpsertCow: %w", err)
@@ -130,14 +130,14 @@ func (q *Queries) Close() error {
 			err = fmt.Errorf("error closing getPregnanciesByCowIdStmt: %w", cerr)
 		}
 	}
-	if q.getTaskByCowIdStmt != nil {
-		if cerr := q.getTaskByCowIdStmt.Close(); cerr != nil {
-			err = fmt.Errorf("error closing getTaskByCowIdStmt: %w", cerr)
-		}
-	}
 	if q.getTasksByDateStmt != nil {
 		if cerr := q.getTasksByDateStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing getTasksByDateStmt: %w", cerr)
+		}
+	}
+	if q.updateTaskStatusStmt != nil {
+		if cerr := q.updateTaskStatusStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing updateTaskStatusStmt: %w", cerr)
 		}
 	}
 	if q.upsertCowStmt != nil {
@@ -214,8 +214,8 @@ type Queries struct {
 	getInseminationsByCowIdStmt *sql.Stmt
 	getMilkInTimeframeStmt      *sql.Stmt
 	getPregnanciesByCowIdStmt   *sql.Stmt
-	getTaskByCowIdStmt          *sql.Stmt
 	getTasksByDateStmt          *sql.Stmt
+	updateTaskStatusStmt        *sql.Stmt
 	upsertCowStmt               *sql.Stmt
 	upsertInseminationStmt      *sql.Stmt
 	upsertMilkStmt              *sql.Stmt
@@ -237,8 +237,8 @@ func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 		getInseminationsByCowIdStmt: q.getInseminationsByCowIdStmt,
 		getMilkInTimeframeStmt:      q.getMilkInTimeframeStmt,
 		getPregnanciesByCowIdStmt:   q.getPregnanciesByCowIdStmt,
-		getTaskByCowIdStmt:          q.getTaskByCowIdStmt,
 		getTasksByDateStmt:          q.getTasksByDateStmt,
+		updateTaskStatusStmt:        q.updateTaskStatusStmt,
 		upsertCowStmt:               q.upsertCowStmt,
 		upsertInseminationStmt:      q.upsertInseminationStmt,
 		upsertMilkStmt:              q.upsertMilkStmt,

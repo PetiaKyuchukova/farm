@@ -6,7 +6,7 @@ import "../cow-profile/profile.ts"
 @customElement('farm-tasks')
 export class FarmTasks extends LitElement {
     static styles = css`
- 
+
     .content {
     background: white;
     width: 80%;
@@ -61,10 +61,36 @@ export class FarmTasks extends LitElement {
         })
     }
 
+    private updateTask(task: Task) {
+        console.log(task)
+        fetch(`http://localhost:9030/tasks/update`, {
+            method: 'PUT',
+            body: JSON.stringify(task)
+        }).then(async (response) => {
+            if (response.ok) {
+                console.log("Saved!")
+            } else {
+                this.error = 'Error updating task.'
+                console.log("err saving cow!")
+            }
+        })
+
+        window.location.reload();
+        return
+    }
     private openCowProfile(cowId: string) {
         return (_e: MouseEvent) => {
             this.idx = cowId
             this.visible = !this.visible
+        }
+    }
+
+    private taskStatus(taskId: number) {
+        return (_e: MouseEvent) => {
+           this.data[taskId].done = !this.data[taskId].done
+            console.log("task",this.data[taskId])
+
+            this.updateTask(this.data[taskId])
         }
     }
 
@@ -105,16 +131,6 @@ export class FarmTasks extends LitElement {
     }
 
     render() {
-        if (this.isLoading) {
-            return html`
-                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
-                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
-
-                <div class="spinner-border" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>`
-        }
-
 
         if (this.error !== ''){
             return html`
@@ -130,11 +146,12 @@ export class FarmTasks extends LitElement {
         let rows= []
 
         if (this.data.length > 0){
-            for (const task of this.data) {
+            for (let i = 0; i < this.data.length; i++) {
                 let row = html`
-                    <tr class="${this.mapTaksTypes.get(task.type)}" @click=${this.openCowProfile(task.cow_id)}>
-                        <td>${task.cow_id}</td>
-                        <td>${task.text}</td>
+                    <tr style="text-decoration: ${this.data[i].done ? "line-through" : "none"}; opacity: ${this.data[i].done ? 0.5 : 1}" class="${this.mapTaksTypes.get(this.data[i].type)}"  >
+                        <td style="cursor: pointer" @click=${this.openCowProfile(this.data[i].cow_id)}>${this.data[i].cow_id}</td>
+                        <td>${this.data[i].text}</td>
+                        <td style="text-align: right; background: gainsboro;" @click=${this.taskStatus(i)}><i class="bi bi-check-lg"></i></td>
                     </tr>`
                 rows.push(row)
             }
@@ -143,7 +160,7 @@ export class FarmTasks extends LitElement {
         return html`
             <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
-
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
             
             <div class="content">
                 <h1>Tasks</h1>

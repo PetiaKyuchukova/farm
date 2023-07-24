@@ -22,10 +22,11 @@ const (
 )
 
 type Task struct {
-	CowID string    `json:"cow_id"`
-	Date  time.Time `json:"date"`
-	Type  string    `json:"type"`
-	Text  string    `json:"text"`
+	CowID string     `json:"cow_id"`
+	Date  CustomTime `json:"date"`
+	Type  string     `json:"type"`
+	Text  string     `json:"text"`
+	Done  bool       `json:"done"`
 }
 
 type TaskRepo interface {
@@ -33,4 +34,5 @@ type TaskRepo interface {
 	DeleteTask(ctx context.Context, id string) error
 	GetAllTasks(ctx context.Context) ([]Task, error)
 	GetTasksByDate(ctx context.Context, date time.Time) ([]Task, error)
+	UpdateTaskStatus(ctx context.Context, cowId string, date time.Time, done bool) error
 }

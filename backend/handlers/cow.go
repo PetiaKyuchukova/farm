@@ -34,6 +34,13 @@ func (h *defaultHandler) UpsertCow(gc *gin.Context) {
 		gc.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
+	if cow.ID == "" {
+		fmt.Errorf("error cow id is empty")
+		gc.JSON(http.StatusBadRequest, gin.H{"error": "error cow id is empty"})
+		return
+	}
+
 	err := h.uc.UpsertCow(gc.Request.Context(), cow)
 	if err != nil {
 		fmt.Errorf("error upserting cow: %w", err)

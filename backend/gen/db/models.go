@@ -11,7 +11,7 @@ import (
 
 type Cow struct {
 	ID          string         `json:"id"`
-	Birthdate   time.Time      `json:"birthdate"`
+	Birthdate   sql.NullTime   `json:"birthdate"`
 	Gender      sql.NullString `json:"gender"`
 	Breed       sql.NullString `json:"breed"`
 	Colour      sql.NullString `json:"colour"`

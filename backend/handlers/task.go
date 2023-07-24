@@ -1,7 +1,9 @@
 package handlers
 
 import (
+	"farm/backend/domain"
 	"farm/backend/usecase"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"time"
@@ -13,6 +15,7 @@ import (
 
 type TaskHandler interface {
 	GetTasksByDate(gc *gin.Context)
+	UpdateTask(gc *gin.Context)
 }
 
 type defaultTaskHandler struct {
@@ -39,4 +42,22 @@ func (h *defaultTaskHandler) GetTasksByDate(gc *gin.Context) {
 	}
 
 	gc.JSON(http.StatusOK, tasks)
+}
+
+func (h *defaultTaskHandler) UpdateTask(gc *gin.Context) {
+	var task domain.Task
+
+	if err := gc.BindJSON(&task); err != nil {
+		fmt.Errorf("error binding json %w", err)
+		gc.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	err := h.taskUC.UpdateTaskStatus(gc.Request.Context(), task)
+	if err != nil {
+		gc.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	gc.JSON(http.StatusOK, task)
 }

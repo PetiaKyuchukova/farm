@@ -55,7 +55,7 @@ func (w *Worker) TaskWorker(ctx context.Context) {
 			//sent alarm: to check pregnancy. Is this cow pregnant? --> true or false (if user press yes, sent a put req to update IsPregnant to true)
 			w.taskUC.UpsertTask(ctx, domain.Task{
 				CowID: cow.ID,
-				Date:  time.Now(),
+				Date:  domain.CustomTime{time.Now()},
 				Type:  domain.PregnantType,
 				Text:  domain.PregnantText,
 			})
@@ -64,7 +64,7 @@ func (w *Worker) TaskWorker(ctx context.Context) {
 			//sent alarm: dry period after 15 days
 			w.taskUC.UpsertTask(ctx, domain.Task{
 				CowID: cow.ID,
-				Date:  time.Now(),
+				Date:  domain.CustomTime{time.Now()},
 				Type:  domain.DryPeriodAfter15dType,
 				Text:  domain.DryPeriodAfter15dText,
 			})
@@ -72,7 +72,7 @@ func (w *Worker) TaskWorker(ctx context.Context) {
 			//sent alarm: time for dry period, birth after 60 days
 			w.taskUC.UpsertTask(ctx, domain.Task{
 				CowID: cow.ID,
-				Date:  time.Now(),
+				Date:  domain.CustomTime{time.Now()},
 				Type:  domain.DryPeriodStartType,
 				Text:  domain.DryPeriodStartText,
 			})
@@ -82,7 +82,7 @@ func (w *Worker) TaskWorker(ctx context.Context) {
 
 			w.taskUC.UpsertTask(ctx, domain.Task{
 				CowID: cow.ID,
-				Date:  time.Now(),
+				Date:  domain.CustomTime{time.Now()},
 				Type:  domain.GivingBirthType,
 				Text:  domain.GivingBirthText,
 			})
@@ -94,7 +94,7 @@ func (w *Worker) TaskWorker(ctx context.Context) {
 			//sent alarm: today is {cow number} ovulation day, will we make Artificial insemination? --> true or false (if user press true sent a put req that will update the LastFertilization)
 			w.taskUC.UpsertTask(ctx, domain.Task{
 				CowID: cow.ID,
-				Date:  time.Now(),
+				Date:  domain.CustomTime{time.Now()},
 				Type:  domain.FertilizationType,
 				Text:  domain.FertilizationText,
 			})
@@ -103,7 +103,7 @@ func (w *Worker) TaskWorker(ctx context.Context) {
 			//sent alarm: today is {cow number} ovulation day, we made Artificial insemination after last ovulation, is it really in ovulation? will we make Artificial insemination? --> true or false (if user press true sent a put req that will update the LastFertilization)
 			w.taskUC.UpsertTask(ctx, domain.Task{
 				CowID: cow.ID,
-				Date:  time.Now(),
+				Date:  domain.CustomTime{time.Now()},
 				Type:  domain.OvulationType,
 				Text:  domain.OvulationAfterFertilizationText,
 			})

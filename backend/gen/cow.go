@@ -29,7 +29,7 @@ func makeNullTime(t time.Time) sql.NullTime {
 func (r *CowRepo) UpsertCow(ctx context.Context, cow domain.Cow) error {
 	err := r.querier.UpsertCow(ctx, db2.UpsertCowParams{
 		ID:          cow.ID,
-		Birthdate:   cow.Birthdate.Time,
+		Birthdate:   makeNullTime(cow.Birthdate.Time),
 		Gender:      makeNullString(cow.Gender),
 		Breed:       makeNullString(cow.Breed),
 		Colour:      makeNullString(cow.Colour),
@@ -56,7 +56,7 @@ func (r *CowRepo) GetAllCows(ctx context.Context) ([]domain.Cow, error) {
 	for _, row := range rows {
 		cows = append(cows, domain.Cow{
 			ID:            row.ID,
-			Birthdate:     domain.CustomTime{row.Birthdate},
+			Birthdate:     domain.CustomTime{row.Birthdate.Time},
 			Colour:        row.Colour.String,
 			Gender:        row.Gender.String,
 			Breed:         row.Breed.String,
@@ -79,7 +79,7 @@ func (r *CowRepo) GetCowById(ctx context.Context, id string) (*domain.Cow, error
 	}
 	cow := domain.Cow{
 		ID:            row.ID,
-		Birthdate:     domain.CustomTime{row.Birthdate},
+		Birthdate:     domain.CustomTime{row.Birthdate.Time},
 		Colour:        row.Colour.String,
 		Gender:        row.Gender.String,
 		Breed:         row.Breed.String,

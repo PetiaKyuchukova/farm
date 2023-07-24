@@ -34,11 +34,11 @@ export class FarmCowProfile extends LitElement {
         id: "",
         colour: "",
         birthdate: new Date(),
-        gender: "",
+        gender: "female",
         breed: "",
         ovulation: new Date(),
         motherId: "",
-        farmerId: "",
+        fatherId: "",
         fatherBreed: "",
         inseminations: [],
         pregnancies: [],
@@ -70,6 +70,9 @@ export class FarmCowProfile extends LitElement {
 
     @state()
     pregnant = false
+
+    @state()
+    isFemale = true
 
     getToday(){
         const date = new Date();
@@ -154,21 +157,21 @@ export class FarmCowProfile extends LitElement {
     onChangeMotherBreed(e:any) { this.data.motherBreed = e.target.value }
     onChangeFatherID(e:any) { this.data.fatherId = e.target.value }
     onChangeFatherBreed(e:any) { this.data.fatherBreed = e.target.value }
-    onChangePregnancy(e: any) {
-
+    onChangePregnancy() {
             this.data.isPregnant = true
             this.pregnant = true
-        
     }
-    onChangeNotPregnancy(e: any) {
-        console.log(this.pregnant)
-
-            console.log(this.pregnant)
+    onChangeNotPregnancy() {
             this.data.isPregnant = false
             this.pregnant = false
-            console.log(this.pregnant)
-
-
+     }
+     onChangeMale() {
+            this.data.gender = "male"
+            this.isFemale = false
+     }
+     onChangeFemale() {
+            this.data.gender = "female"
+            this.isFemale = true
      }
     onChangeOvulation(e:any) {
         this.data.ovulation = e.target.value
@@ -198,7 +201,7 @@ export class FarmCowProfile extends LitElement {
         if (this.addingInseminations){
             this.data.inseminations.push(this.addedInsemination)
         }
-        console.log("save")
+
         fetch(`http://localhost:9030/upsert`, {
             method: 'PUT',
             body: JSON.stringify(this.data)
@@ -411,7 +414,7 @@ export class FarmCowProfile extends LitElement {
 
     render() {
 
-        if (this.isLoading) {
+        if (this.isLoading && this.visibleB) {
             return html`
                 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
                 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
@@ -422,6 +425,12 @@ export class FarmCowProfile extends LitElement {
         }
 
         this.pregnant = this.data.isPregnant
+        if(this.data.gender === 'female'){
+            this.isFemale = true
+        }
+        if(this.data.gender === 'male'){
+            this.isFemale = false
+        }
 
         let profile = this.visibleB ?
             html`
@@ -457,8 +466,14 @@ export class FarmCowProfile extends LitElement {
                         </div>
                         <div class="input-group input-group-sm mb-3">
                             <span class="input-group-text" id="inputGroup-sizing-sm">Gender</span>
-                            <input type = "radio" name = "radio" value = "male" id = "radio1" > Male</input>
-                            <input type = "radio" name = "radio" value = "female" id = "radio2" > Female</input>
+                            <button class=${!this.isFemale ? "btn btn-info" : "btn btn-light"}
+                                    @click="${this.onChangeMale}" style="opacity: ${!this.isFemale ? 1 : 0.5}">Male
+                            </button>
+                            <button class=${this.isFemale ? "btn btn-danger" : "btn btn-light"}
+                                    @click="${this.onChangeFemale}"
+                                    style="opacity: ${this.isFemale ? 1 : 0.5}; background: hotpink; border-color: hotpink">
+                                Female
+                            </button>
                         </div>
                         <div class="input-group input-group-sm mb-3">
                             <span class="input-group-text" id="inputGroup-sizing-sm">Color</span>
@@ -500,8 +515,14 @@ export class FarmCowProfile extends LitElement {
                                 html`
                                     <div class="input-group input-group-sm mb-3">
                                         <span class="input-group-text" id="inputGroup-sizing-sm">Is Pregnant</span>
-                                        <button @click="${this.onChangePregnancy}" style="color: green; opacity: ${this.pregnant? 1: 0.5}">Pregnant</button>
-                                        <button @click="${this.onChangeNotPregnancy}" style="color: red; opacity: ${!this.pregnant? 1: 0.5}">NOT Pregnant</button>
+                                        <button class=${this.pregnant ? "btn btn-success" : "btn btn-light"}
+                                                @click="${this.onChangePregnancy}"
+                                                style="opacity: ${this.pregnant ? 1 : 0.5}">Pregnant
+                                        </button>
+                                        <button class=${!this.pregnant ? "btn btn-danger" : "btn btn-light"}
+                                                @click="${this.onChangeNotPregnancy}"
+                                                style="opacity: ${!this.pregnant ? 1 : 0.5}">NOT Pregnant
+                                        </button>
                                     </div>
 
                                     <div class="input-group input-group-sm mb-3">
@@ -512,7 +533,6 @@ export class FarmCowProfile extends LitElement {
                                                @change="${this.onChangeOvulation}">
                                     </div>
                                 `}
-
                     </div>
                     ${this.data.gender == "male" ? nothing : html`
                         <div style="    
@@ -578,7 +598,7 @@ margin-bottom: 20px;">
                                 </div>
                             </div>
                         </div>` : nothing}
-
+                    
                 </div>
             ` : nothing
 

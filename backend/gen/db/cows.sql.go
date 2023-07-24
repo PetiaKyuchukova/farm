@@ -8,7 +8,6 @@ package db
 import (
 	"context"
 	"database/sql"
-	"time"
 )
 
 const deleteCow = `-- name: DeleteCow :exec
@@ -104,7 +103,7 @@ INSERT INTO cows (id, birthdate,gender, breed,colour,motherId,motherBreed, fathe
 
 type UpsertCowParams struct {
 	ID          string         `json:"id"`
-	Birthdate   time.Time      `json:"birthdate"`
+	Birthdate   sql.NullTime   `json:"birthdate"`
 	Gender      sql.NullString `json:"gender"`
 	Breed       sql.NullString `json:"breed"`
 	Colour      sql.NullString `json:"colour"`
