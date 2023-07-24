@@ -134,6 +134,7 @@ export class FarmMilkList extends LitElement {
        }
 
        let rows = []
+       this.totalProfit =0
 
        if (this.data!=undefined){
            for (const milk of this.data) {

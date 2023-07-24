@@ -90,11 +90,14 @@ export class FarmMilkPost extends LitElement {
         }
 
         this.visibleB = false
+
         window.location.reload();
     }
 
     cancelForm(){
         this.visibleB = false
+        window.location.reload();
+        
     }
 
     render(){
@@ -135,7 +138,6 @@ export class FarmMilkPost extends LitElement {
                 <div style="text-align: right;">
                     <button type="button" style=" width: 100px;   height: 40px;" class="btn btn-outline-secondary" @click="${this.cancelForm}">Cancel</button>
                     <button type="button" style="width: 100px;    height: 40px;" class="btn btn-success" @click="${this.saveMilk}">Save</button>
-                    
                 </div>
                 
             </div>

@@ -225,6 +225,7 @@ export class FarmCowProfile extends LitElement {
                 breed: "",
                 IsArtificial: false,
             }
+
             window.location.reload();
             return
     }
