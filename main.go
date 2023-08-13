@@ -7,6 +7,7 @@ import (
 	"farm/backend/gen"
 	"farm/backend/gen/db"
 	"farm/backend/handlers"
+	"farm/backend/postgres/unitofwork"
 	"farm/backend/usecase"
 	worker "farm/backend/worker"
 	"fmt"
@@ -60,6 +61,7 @@ func main() {
 
 	//repositories
 	querier := db.New(mydb)
+	uow := unitofwork.NewUnitOfWork(mydb)
 	taskRepo := gen.NewTaskRepo(querier)
 	cowRepo := gen.NewCowRepo(querier)
 	milkRepo := gen.NewMilkRepo(querier)
@@ -67,7 +69,7 @@ func main() {
 	pregnancyRepo := gen.NewPregnancyRepo(querier)
 
 	//use-cases
-	cowUc := usecase.NewCowUC(cowRepo, pregnancyRepo, inseminationRepo, taskRepo)
+	cowUc := usecase.NewCowUC(cowRepo, pregnancyRepo, inseminationRepo, taskRepo, uow)
 	taskUC := usecase.NewTaskUC(taskRepo)
 	milkUC := usecase.NewMilkUC(milkRepo)
 
@@ -77,7 +79,7 @@ func main() {
 	milkHandler := handlers.NewMilkHandler(milkUC)
 
 	worker := worker.NewWorker(taskUC, cowUc)
-	worker.Schedule(ctx, "*/5 * * * *")
+	worker.Schedule(ctx, "0 0 * * *")
 
 	router := gin.Default()
 	router.LoadHTMLGlob("src/pages/*.html")

@@ -34,7 +34,6 @@ func (w *Worker) Schedule(ctx context.Context, cronExpression string) error {
 }
 
 func (w *Worker) TaskWorker(ctx context.Context) {
-	//get all cows.sql from DB
 	cows, err := w.cowUC.GetAllCows(ctx)
 	if err != nil {
 		if err != nil {
@@ -48,11 +47,21 @@ func (w *Worker) TaskWorker(ctx context.Context) {
 	//save alarms to db then frontend will fetch them for current day
 	for _, cow := range cows {
 		if len(cow.Inseminations) == 0 {
+			if cow.Ovulation.Add(21*day) == today {
+				cow.Ovulation.Time = today
+				//if the cow is not pregnant AND we did not make Artificial insemination on last ovulation AND today is 21 days after the last ovu - today is ovulation
+				w.taskUC.UpsertTask(ctx, domain.Task{
+					CowID: cow.ID,
+					Date:  domain.CustomTime{time.Now()},
+					Type:  domain.FertilizationType,
+					Text:  domain.FertilizationText,
+				})
+			}
 			continue
 		}
 
 		if cow.Inseminations[0].Date.Add(36*day) == today {
-			//sent alarm: to check pregnancy. Is this cow pregnant? --> true or false (if user press yes, sent a put req to update IsPregnant to true)
+			//sent alarm: to check pregnancy.
 			w.taskUC.UpsertTask(ctx, domain.Task{
 				CowID: cow.ID,
 				Date:  domain.CustomTime{time.Now()},
@@ -77,8 +86,7 @@ func (w *Worker) TaskWorker(ctx context.Context) {
 				Text:  domain.DryPeriodStartText,
 			})
 		} else if cow.IsPregnant && cow.Inseminations[0].Date.Add(283*day) == today {
-			//sent alarm: today we expect birth! did the cow give birth today? --> true or false (if user press yes, sent a put req to update IsPregnant to false LastOvulation = today )
-			//should add func to set give birthdate manually
+			//sent alarm: today we expect birth! did the cow give birth today?
 
 			w.taskUC.UpsertTask(ctx, domain.Task{
 				CowID: cow.ID,
@@ -91,7 +99,7 @@ func (w *Worker) TaskWorker(ctx context.Context) {
 		if !cow.IsPregnant && cow.Inseminations[0].Date.Before(cow.Ovulation.Time) && cow.Ovulation.Add(21*day) == today {
 			cow.Ovulation.Time = today
 			//if the cow is not pregnant AND we did not make Artificial insemination on last ovulation AND today is 21 days after the last ovu - today is ovulation
-			//sent alarm: today is {cow number} ovulation day, will we make Artificial insemination? --> true or false (if user press true sent a put req that will update the LastFertilization)
+			//sent alarm: today is {cow number} ovulation day, will we make Artificial insemination?
 			w.taskUC.UpsertTask(ctx, domain.Task{
 				CowID: cow.ID,
 				Date:  domain.CustomTime{time.Now()},
@@ -100,7 +108,8 @@ func (w *Worker) TaskWorker(ctx context.Context) {
 			})
 		} else if !cow.IsPregnant && cow.Inseminations[0].Date.After(cow.Ovulation.Time) && cow.Ovulation.Add(21*day) == today {
 			cow.Ovulation.Time = today
-			//sent alarm: today is {cow number} ovulation day, we made Artificial insemination after last ovulation, is it really in ovulation? will we make Artificial insemination? --> true or false (if user press true sent a put req that will update the LastFertilization)
+			//sent alarm: today is {cow number} ovulation day, we made Artificial insemination after last ovulation,
+			//is it really in ovulation? will we make Artificial insemination?
 			w.taskUC.UpsertTask(ctx, domain.Task{
 				CowID: cow.ID,
 				Date:  domain.CustomTime{time.Now()},

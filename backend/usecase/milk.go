@@ -17,13 +17,7 @@ func NewMilkUC(repo domain.MilkRepo) MilkUC {
 }
 
 func (m *MilkUC) UpsertMilk(ctx context.Context, milk domain.Milk) error {
-	err := m.repo.UpsertMIlk(ctx, milk)
-	if err != nil {
-		fmt.Errorf("error upserting milk:%w", err)
-		return err
-	}
-
-	return nil
+	return m.repo.UpsertMIlk(ctx, milk)
 }
 
 func (m *MilkUC) GetMilkInTimeframe(ctx context.Context, from, to time.Time) ([]domain.Milk, error) {

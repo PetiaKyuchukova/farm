@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"farm/backend/domain"
+	"farm/backend/domain/unitofwork"
 	"fmt"
 	"sort"
 )
@@ -12,37 +13,51 @@ type CowsUC struct {
 	pregnancyRepo    domain.PregnancyRepo
 	inseminationRepo domain.InseminationRepo
 	taskRepo         domain.TaskRepo
+	unitOfWork       unitofwork.Executor
 }
 
-func NewCowUC(repo domain.CowRepo, pregnancyRepo domain.PregnancyRepo, inseminationRepo domain.InseminationRepo, taskRepo domain.TaskRepo) CowsUC {
+func NewCowUC(repo domain.CowRepo, pregnancyRepo domain.PregnancyRepo, inseminationRepo domain.InseminationRepo, taskRepo domain.TaskRepo, uow unitofwork.Executor) CowsUC {
 	return CowsUC{
 		repo:             repo,
 		pregnancyRepo:    pregnancyRepo,
 		inseminationRepo: inseminationRepo,
 		taskRepo:         taskRepo,
+		unitOfWork:       uow,
 	}
 }
 
 func (c *CowsUC) UpsertCow(ctx context.Context, cow domain.Cow) error {
-	for _, pregnancy := range cow.Pregnancies {
-		err := c.pregnancyRepo.UpsertPregnancy(ctx, pregnancy, cow.ID)
+	err := c.unitOfWork.Do(ctx, func(ctx context.Context, uow unitofwork.Cow) error {
+		cowRepo := uow.CowRepo()
+		pregnancyRepo := uow.PregnancyRepo()
+		inseminationRepo := uow.InseminationRepo()
+
+		for _, pregnancy := range cow.Pregnancies {
+			err := pregnancyRepo.UpsertPregnancy(ctx, pregnancy, cow.ID)
+			if err != nil {
+				fmt.Errorf("error upserting pregnancy: %s", pregnancy)
+				return err
+			}
+		}
+
+		for _, insemination := range cow.Inseminations {
+			err := inseminationRepo.UpsertInsemination(ctx, insemination, cow.ID)
+			if err != nil {
+				fmt.Errorf("error upserting inemination: %s", insemination)
+				return err
+			}
+		}
+
+		err := cowRepo.UpsertCow(ctx, cow)
 		if err != nil {
-			fmt.Errorf("error upserting pregnancy: %s", pregnancy)
+			fmt.Errorf("error upserting cow: %s", cow)
 			return err
 		}
-	}
 
-	for _, insemination := range cow.Inseminations {
-		err := c.inseminationRepo.UpsertInsemination(ctx, insemination, cow.ID)
-		if err != nil {
-			fmt.Errorf("error upserting inemination: %s", insemination)
-			return err
-		}
-	}
+		return nil
+	})
 
-	err := c.repo.UpsertCow(ctx, cow)
 	if err != nil {
-		fmt.Errorf("error upserting cow: %s", cow)
 		return err
 	}
 
@@ -50,27 +65,40 @@ func (c *CowsUC) UpsertCow(ctx context.Context, cow domain.Cow) error {
 }
 
 func (c *CowsUC) DeleteCowEntry(ctx context.Context, id string) error {
-	err := c.pregnancyRepo.DeletePregnancies(ctx, id)
-	if err != nil {
-		fmt.Errorf("error deleting pregnancies of cow: %w", err)
-		return err
-	}
+	err := c.unitOfWork.Do(ctx, func(ctx context.Context, uow unitofwork.Cow) error {
+		cowRepo := uow.CowRepo()
+		pregnancyRepo := uow.PregnancyRepo()
+		inseminationRepo := uow.InseminationRepo()
+		taskRepo := uow.TaskRepo()
 
-	err = c.inseminationRepo.DeleteInseminations(ctx, id)
-	if err != nil {
-		fmt.Errorf("error deleting inseminations of cow: %w", err)
-		return err
-	}
+		err := pregnancyRepo.DeletePregnancies(ctx, id)
+		if err != nil {
+			fmt.Errorf("error deleting pregnancies of cow: %w", err)
+			return err
+		}
 
-	err = c.taskRepo.DeleteTask(ctx, id)
-	if err != nil {
-		fmt.Errorf("error deleting tasks of cow: %w", err)
-		return err
-	}
+		err = inseminationRepo.DeleteInseminations(ctx, id)
+		if err != nil {
+			fmt.Errorf("error deleting inseminations of cow: %w", err)
+			return err
+		}
 
-	err = c.repo.DeleteCow(ctx, id)
+		err = taskRepo.DeleteTask(ctx, id)
+		if err != nil {
+			fmt.Errorf("error deleting tasks of cow: %w", err)
+			return err
+		}
+
+		err = cowRepo.DeleteCow(ctx, id)
+		if err != nil {
+			fmt.Errorf("error deleting cow: %w", err)
+			return err
+		}
+
+		return nil
+	})
+
 	if err != nil {
-		fmt.Errorf("error deleting cow: %w", err)
 		return err
 	}
 
@@ -114,6 +142,7 @@ func (c *CowsUC) GetCowEntryById(ctx context.Context, id string) (*domain.Cow, e
 	pregnancies, err := c.pregnancyRepo.GetPregnanciesByCowID(ctx, id)
 	if err != nil {
 		fmt.Errorf("err getting pregnancies: %w", err)
+		return nil, err
 	}
 
 	sort.Slice(pregnancies, func(aa, ab int) bool {
@@ -123,6 +152,7 @@ func (c *CowsUC) GetCowEntryById(ctx context.Context, id string) (*domain.Cow, e
 	insemination, err := c.inseminationRepo.GetInseminationsByCowID(ctx, id)
 	if err != nil {
 		fmt.Errorf("err getting inseminations: %w", err)
+		return nil, err
 	}
 
 	sort.Slice(insemination, func(aa, ab int) bool {

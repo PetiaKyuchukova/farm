@@ -14,7 +14,6 @@ CREATE TABLE cows
     ovulation timestamp,
 
     PRIMARY KEY (id)
-
 );
 
 -- +goose Down

@@ -19,11 +19,7 @@ func (c *TaskUC) UpsertTask(ctx context.Context, task domain.Task) error {
 }
 
 func (c *TaskUC) UpdateTaskStatus(ctx context.Context, task domain.Task) error {
-	err := c.repo.UpdateTaskStatus(ctx, task.CowID, task.Date.Time, task.Done)
-	if err != nil {
-		return err
-	}
-	return nil
+	return c.repo.UpdateTaskStatus(ctx, task.CowID, task.Date.Time, task.Done)
 }
 
 func (c *TaskUC) DeleteTask(ctx context.Context, id string) error {

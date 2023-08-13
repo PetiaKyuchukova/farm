@@ -9,3 +9,5 @@ INSERT INTO milk(date,liters,price) VALUES (@date, @liters, @price)
          date = @date,
         liters = @liters,
         price = @price;
+
+

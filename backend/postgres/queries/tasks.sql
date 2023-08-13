@@ -17,3 +17,4 @@ where cowID = $2 and date = $3;
 -- name: GetTasksByDate :many
 SELECT * FROM tasks
 where date =$1 ;
+
