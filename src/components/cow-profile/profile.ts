@@ -293,7 +293,6 @@ export class FarmCowProfile extends LitElement {
             <tr>
                 <td>${insemination.date}</td>
                 <td>${insemination.breed}</td>
-                <td>${insemination.IsArtificial}</td>
             </tr>
             `
             rows.push(row)
@@ -312,11 +311,6 @@ export class FarmCowProfile extends LitElement {
                         <input type="text" id="insemination-breed" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" @change="${this.onChangeAddedInseminationBreed}" >
                     </div>
                 </td>
-                <td>
-                    <div class="input-group input-group-sm mb-3">
-                        <input type="text" id="insemination-artf" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" @change="${this.onChangeAddedInseminationIsArtf}">
-                    </div>
-                </td>
             </tr>` : nothing
 
         rows.push(additionalRow)
@@ -328,7 +322,6 @@ export class FarmCowProfile extends LitElement {
                 <tr>
                     <th scope="col">Date</th>
                     <th scope="col">Breed</th>
-                    <th scope="col">Is Artificial?</th>
                 </tr>
                 </thead>
                 ${rows}

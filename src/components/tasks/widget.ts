@@ -112,13 +112,14 @@ export class FarmTasks extends LitElement {
 
     fillMap(){
        let  mapTypes = new Map();
-        mapTypes.set(this.FertilizationType, this.warning)
         mapTypes.set(this.PregnantType, this.warning)
+
 
         mapTypes.set(this.GivingBirthType, this.danger)
         mapTypes.set(this.DryPeriodStartType, this.danger)
+        mapTypes.set(this.OvulationType, this.danger)
+        mapTypes.set(this.FertilizationType, this.danger)
 
-        mapTypes.set(this.OvulationType, this.success)
         mapTypes.set(this.DryPeriodAfter15dType, this.success)
         mapTypes.set(this.PostMilkType, this.info)
 
@@ -163,7 +164,7 @@ export class FarmTasks extends LitElement {
             <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
             
             <div class="content">
-                <h1>Tasks</h1>
+                <h1>Tasks for today </h1>
                 <table class="table table-hover">
                     <thead>
                     <td>Cow Id</td>

@@ -160,7 +160,7 @@ export class FarmMilkList extends LitElement {
 
            <div class="content">
                <div style="display: flex; justify-content: space-between;">
-                   <h1>Milk History</h1>
+                   <h1>Monthly Milk</h1>
                    <button type="button" style="height: 40px;" class="btn btn-success" @click=${this.openPostForm()}>+ Add Milk</button>
                </div>
                <table class="table">
